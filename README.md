@@ -18,11 +18,31 @@ git clone https://github.com/eouia/MMM-Hotword.git
 cd MMM-Hotword
 npm install
 ```
+When you fails to install `snowboy` itself. 
 ```sh
+cd ~/MagicMirror/modules/MMM-Hotword
 npm install --save snowboy   # Sometimes it could fail, retry again.
+```
+If you doubt errors are caused by different `node.JS` version, you can try to compile it by yourself.
+```sh
+cd ~/MagicMirror/modules/MMM-Hotword
+./node_modules/node-pre-gyp/bin/node-pre-gyp clean configure build
+```
+
+If there is no special errors(except some warnings), you can use it. test it with `serveronly` mode.
+
+But maybe in `kiosk` mode, you may meet some error like this;
+```
+Error: Cannot find module '/home/pi/MagicMirror/modules/MMM-Hotword/node_modules/snowboy/lib/node/binding/Release/electron-v2.0-linux-arm/snowboy.node'
+```
+In that case, 
+```sh
+cd ~/MagicMirror/modules/MMM-Hotword
 npm install --save-dev electron-rebuild
 ./node_modules/.bin/electron-rebuild   # It could takes dozens sec.
 ```
+
+And.. those are all I can suggest to you. 
 
 ### Configuration
 Below values are pre-set as default values. It means, you can put even nothing in config field.
