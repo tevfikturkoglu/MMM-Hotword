@@ -119,7 +119,7 @@ This module might broadcast some notification as results.
 1. If `autostart` is set as 'true', Your mirror is ready to catch hotwords after the mirror is on. (See 5. for `autostart` is 'false')
 2. Say the hotword. (e.g; 'Jarvis' or 'Smart mirror')
 3. If detection is success, `HOTWORD_DETECTED`notification will be broadcasted with `{index:n, hotword:'something'}`.
-4. Now, you can make your other modules receive that notification and do something.
+4. Now, you can make your other modules to receive that notification and do something.
 5. After `HOTWORD_DETECTED` notification is sent, `MMM-Hotword` stops listening hotword(unless `autorestart` is `true`), so, your other modules should reactivate `MMM-HOTWORD` with `HOTWORD_RESUME` notification. (If your module uses microphone, should release mic for hotword listening before notification)
 6. Don't set `autorestart` as 'true' when you combine this with other voice related modules. (But if you have 2 mics, It could be OK.)
 
