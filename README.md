@@ -18,7 +18,7 @@ git clone https://github.com/eouia/MMM-Hotword.git
 cd MMM-Hotword
 npm install
 ```
-When you fails to install `snowboy` itself. 
+When you fail to install `snowboy` itself. 
 ```sh
 cd ~/MagicMirror/modules/MMM-Hotword
 npm install --save snowboy   # Sometimes it could fail, retry again.
