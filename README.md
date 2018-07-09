@@ -51,22 +51,22 @@ Below values are pre-set as default values. It means, you can put even nothing i
   module: 'MMM-Hotword',
   config: {
     snowboy: [
-      {
-				hotwords: "SMARTMIRROR", //this will be sended to other module for distinguishing which hotword is detected.
-				file: "resources/models/smart_mirror.umdl",
-				sensitivity: '0.5',
-			},
-			{
-				hotwords: "SNOWBOY",
-				file: "resources/models/snowboy.umdl",
-				sensitivity: '0.5',
-			},
-			{
-				file: 'resources/models/jarvis.umdl',
-				sensitivity: '0.8,0.80',
-				hotwords: ['jarvis','jarvis'] //Kitt.ai changed their Jarvis UMDL, it has 2 models in one file. So weird.
-				//anyway, you can give different name for each. ['jarvis_1', 'jarvis_2']. Even though I think this is useless.
-			}
+	{
+		hotwords: "SMARTMIRROR", //this will be sended to other module for distinguishing which hotword is detected.
+		file: "resources/models/smart_mirror.umdl",
+		sensitivity: '0.5',
+	},
+	{
+		hotwords: "SNOWBOY",
+		file: "resources/models/snowboy.umdl",
+		sensitivity: '0.5',
+	},
+	{
+		file: 'resources/models/jarvis.umdl',
+		sensitivity: '0.8,0.80',
+		hotwords: ['jarvis','jarvis'] //Kitt.ai changed their Jarvis UMDL, it has 2 models in one file. So weird.
+		//anyway, you can give different name for each. ['jarvis_1', 'jarvis_2']. Even though I think this is useless.
+	}
     ],
     record: {
       sampleRate    : 16000,      // audio sample rate
@@ -126,3 +126,9 @@ This module might broadcast some notification as results.
 ### Tip.
 - You can combine this module and [MMM-NotificationTrigger](https://github.com/eouia/MMM-NotificationTrigger) to make voice commander. (But you need so many .umdl or .pmdl to make commands)
 - You can use this module with [MMM-AssistantMk2](https://github.com/eouia/MMM-AssistantMk2) to make embeded Google Assistant. 
+
+
+### Last Tested;
+MagicMirror : v2.4.1
+node.js : 8.11.3 & 10.x
+Platform : Asus Tinker Board (Not Raspberry PI, I have none)
