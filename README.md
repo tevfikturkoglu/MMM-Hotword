@@ -35,13 +35,12 @@ But maybe in `kiosk` mode, you may meet some error like this;
 ```
 Error: Cannot find module '/home/pi/MagicMirror/modules/MMM-Hotword/node_modules/snowboy/lib/node/binding/Release/electron-v2.0-linux-arm/snowboy.node'
 ```
-In that case, 
+In that case, you need to rebuild some modules to match with Electron version.
 ```sh
 cd ~/MagicMirror/modules/MMM-Hotword
 npm install --save-dev electron-rebuild
 ./node_modules/.bin/electron-rebuild   # It could takes dozens sec.
 ```
-
 And.. those are all I can suggest to you. 
 
 ### Configuration
