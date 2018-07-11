@@ -7,12 +7,12 @@ Module.register("MMM-Hotword", {
 	defaults: {
 		snowboy: [
 			{
-				hotwords: "SMARTMIRROR", //this will be sended to other module for distinguishing which hotword is detected.
+				hotwords: "smartmirror", //this will be sended to other module for distinguishing which hotword is detected.
 				file: "resources/models/smart_mirror.umdl",
 				sensitivity: '0.5',
 			},
 			{
-				hotwords: "SNOWBOY",
+				hotwords: "snowboy",
 				file: "resources/models/snowboy.umdl",
 				sensitivity: '0.5',
 			},
