@@ -128,6 +128,6 @@ This module might broadcast some notification as results.
 
 
 ### Last Tested;
-MagicMirror : v2.4.1
-node.js : 8.11.3 & 10.x
-Platform : Asus Tinker Board (Not Raspberry PI, I have none)
+- MagicMirror : v2.4.1
+- node.js : 8.11.3 & 10.x
+- Platform : Asus Tinker Board (Not Raspberry PI, I have none)
