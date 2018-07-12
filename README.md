@@ -51,7 +51,7 @@ Below values are pre-set as default values. It means, you can put even nothing i
   config: {
     snowboy: [
 	{
-		hotwords: "smartmirror", //this will be sended to other module for distinguishing which hotword is detected.
+		hotwords: "smartmirror", //this will be sent to other module for distinguishing which hotword is detected.
 		file: "resources/models/smart_mirror.umdl",
 		sensitivity: '0.5',
 	},
