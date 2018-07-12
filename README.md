@@ -112,7 +112,7 @@ This module might broadcast some notification as results.
 |HOTWORD_ERROR | error | When error is occurred.
 |HOTWORD_LISTENING | null | When this module start listening. (normally instant answer for the 'HOTWORD_RESUME')
 |HOTWORD_SLEEPING | null | When this module stop listening. (normally instant answer for the 'HOTWORD_PAUSE')
-|HOTWORD_DETECTED | {index: `int`, hotword: `string`} | When a hotword is detected, this notification will be casted. <br> In default configuration values;<br>{1, 'SMARTMIRROR'}<br>{2, 'SNOWBOY'}<br>{3, 'JARVIS'}<br>{4, 'JARVIS'}
+|HOTWORD_DETECTED | {index: `int`, hotword: `string`} | When a hotword is detected, this notification will be casted. <br> In default configuration values;<br>{index:1, hotword:'SMARTMIRROR'}<br>{index:2, hotword:'SNOWBOY'}<br>{index:3, hotword:'JARVIS'}<br>{index:4, hotword:'JARVIS'}
 
 #### 3. Common usage flow
 1. If `autostart` is set as 'true', Your mirror is ready to catch hotwords after the mirror is on. (See 5. for `autostart` is 'false')
