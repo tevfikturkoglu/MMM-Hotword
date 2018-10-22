@@ -22,7 +22,6 @@ module.exports = NodeHelper.create({
 
   initializeAfterLoading: function (config) {
     this.config = config
-
     this.restart = this.config.autorestart
   },
 
@@ -55,13 +54,15 @@ module.exports = NodeHelper.create({
   },
 
   activate: function() {
-
+    var testMic = this.config.testMic
+    console.log("TESTMIC:", testMic)
     var models = new Models();
     this.config.snowboy.forEach((model)=>{
       model.file = path.resolve(__dirname, model.file)
       models.add(model)
     })
     var mic = record.start(this.config.record)
+    console.log(mic)
     var detector = new Detector({
       resource: path.resolve(__dirname, "resources/common.res"),
       models: models,
@@ -70,9 +71,15 @@ module.exports = NodeHelper.create({
     console.log('[HOTWORD] begins listening.')
     detector
       .on('silence', ()=>{
+        if (testMic) {
+          console.log("[HOTWORD] Still Silence.")
+        }
         //do nothing
       })
       .on('sound', (buffer)=>{
+        if (testMic) {
+          console.log("[HOTWORD] Sound Captured.")
+        }
         //do nothing
       })
       .on('error', (err)=>{

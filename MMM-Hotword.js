@@ -36,6 +36,7 @@ Module.register("MMM-Hotword", {
 		},
 		autostart: true,
 		autorestart: false,
+		testMic: false, //If set as true, You can test whether Mic device is working properly.
 	},
 
 	notificationReceived: function (notification, payload, sender) {
