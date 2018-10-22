@@ -55,14 +55,12 @@ module.exports = NodeHelper.create({
 
   activate: function() {
     var testMic = this.config.testMic
-    console.log("TESTMIC:", testMic)
     var models = new Models();
     this.config.snowboy.forEach((model)=>{
       model.file = path.resolve(__dirname, model.file)
       models.add(model)
     })
     var mic = record.start(this.config.record)
-    console.log(mic)
     var detector = new Detector({
       resource: path.resolve(__dirname, "resources/common.res"),
       models: models,
