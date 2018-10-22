@@ -80,6 +80,7 @@ Below values are pre-set as default values. It means, you can put even nothing i
     },
     autostart: true              // if 'false', this module will wait for 'HOTWORD_RESUME' notification to start hotwords detection at the beginning.
     autorestart: false          // You can set this 'true' when you want this module to go back to listening mode automatically again after hotword is detected. But use this carefully when your other modules are using microphone or speaker.
+    testMic: false, //If set as true, You can test whether Mic device is working properly.
   }
 },
 
@@ -126,6 +127,7 @@ This module might broadcast some notification as results.
 ### Tip.
 - You can combine this module and [MMM-NotificationTrigger](https://github.com/eouia/MMM-NotificationTrigger) to make voice commander. (But you need so many .umdl or .pmdl to make commands)
 - You can use this module with [MMM-AssistantMk2](https://github.com/eouia/MMM-AssistantMk2) to make embeded Google Assistant. 
+- You can check your MIC device by `testMic:true`. If Mic is setup properly, you can see it's message in your log.
 
 
 ### Last Tested;
