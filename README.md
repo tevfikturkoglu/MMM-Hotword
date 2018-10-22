@@ -25,7 +25,7 @@ npm install --save snowboy   # Sometimes it could fail, retry again.
 ```
 If you doubt errors are caused by different `node.JS` version, you can try to compile it by yourself.
 ```sh
-cd ~/MagicMirror/modules/MMM-Hotword
+cd ~/MagicMirror/modules/MMM-Hotword/node_modules/snowboy
 ./node_modules/node-pre-gyp/bin/node-pre-gyp clean configure build
 ```
 
@@ -37,8 +37,9 @@ Error: Cannot find module '/home/pi/MagicMirror/modules/MMM-Hotword/node_modules
 ```
 In that case, you need to rebuild some binaries to match with Electron version.
 ```sh
-cd ~/MagicMirror/modules/MMM-Hotword
+cd ~/MagicMirror/modules/MMM-Hotword/node_modules/snowboy
 npm install --save-dev electron-rebuild
+npm install nan
 ./node_modules/.bin/electron-rebuild   # It could takes dozens sec.
 ```
 And.. those are all I can suggest to you. 
