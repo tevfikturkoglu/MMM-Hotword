@@ -1,9 +1,19 @@
 ## MMM-Hotword
-MMM-Hotword is a simple snowboy hotword detector.
+MMM-Hotword is a hotword detector.
 You can use this module to wake another voice assistant or to give a command to other module.
 
 ### Screenshot
 This works in background, so there is no screenshot.
+
+### UPDATED
+**1.1.0 (2018-11-4)**
+- notification configurable. (You don't need `MMM-NotificationTrigger` any more for using with `MMM-AssistantMk2(^2.0.0)`)
+- But if you want more complex action chains, you can still use `MMM-NotificationTrigger` also.
+- How to update (From previous version)
+```
+cd ~/MagicMirror/modules/MMM-Hotword
+git pull
+```
 
 ### Installation
 
@@ -18,7 +28,7 @@ git clone https://github.com/eouia/MMM-Hotword.git
 cd MMM-Hotword
 npm install
 ```
-When you fail to install `snowboy` itself. 
+When you fail to install `snowboy` itself.
 ```sh
 cd ~/MagicMirror/modules/MMM-Hotword
 npm install --save snowboy   # Sometimes it could fail, retry again.
@@ -42,7 +52,7 @@ npm install --save-dev electron-rebuild
 npm install nan
 ./node_modules/.bin/electron-rebuild   # It could takes dozens sec.
 ```
-And.. those are all I can suggest to you. 
+And.. those are all I can suggest to you.
 
 ### Configuration
 Below values are pre-set as default values. It means, you can put even nothing in config field.
@@ -74,12 +84,29 @@ Below values are pre-set as default values. It means, you can put even nothing i
       thresholdStart: null,       // silence threshold to start recording, overrides threshold (rec only)
       thresholdEnd  : null,       // silence threshold to end recording, overrides threshold (rec only)
       silence       : 1.0,        // seconds of silence before ending
-      verbose       : false,      // log info to the console
+      verbose       : false,      // log info to the console. Use this when you want to check mic working or not.
       recordProgram : 'arecord',  // Defaults to 'arecord' - also supports 'rec' and 'sox'
       device        : null        // recording device (e.g.: 'plughw:1')
     },
     autostart: true              // if 'false', this module will wait for 'HOTWORD_RESUME' notification to start hotwords detection at the beginning.
     autorestart: false          // You can set this 'true' when you want this module to go back to listening mode automatically again after hotword is detected. But use this carefully when your other modules are using microphone or speaker.
+
+    // customizable notification trigger
+    notifications: {
+			PAUSE: "HOTWORD_PAUSE",
+			RESUME: "HOTWORD_RESUME",
+			LISTENING : "HOTWORD_LISTENING",
+			SLEEPING : "HOTWORD_SLEEPING",
+			ERROR : "HOTWORD_ERROR",
+		},
+		onDetected: {
+			notification: (payload) => {
+				return "HOTWORD_DETECTED"
+			},
+			payload: (payload) => {
+				return payload
+			}
+		},
   }
 },
 
@@ -98,7 +125,7 @@ If you want to use default configuration, just use like this. and it's enough.
 ### Usage
 
 #### 1. Commands
-Other modules can order this module to start/stop by notifications.
+Other modules can order this module to start/stop by notifications. All notifications are customizable, but these info will be about default values.
 
 |Notification| payload| description
 |---|---|---|
@@ -121,14 +148,37 @@ This module might broadcast some notification as results.
 3. If detection is success, `HOTWORD_DETECTED`notification will be broadcasted with `{index:n, hotword:'something'}`.
 4. Now, you can make your other modules to receive that notification and do something.
 5. After `HOTWORD_DETECTED` notification is sent, `MMM-Hotword` stops listening hotword(unless `autorestart` is `true`), so, your other modules should reactivate `MMM-HOTWORD` with `HOTWORD_RESUME` notification. (If your module uses microphone, should release mic for hotword listening before notification)
-6. Don't set `autorestart` as 'true' when you combine this with other voice related modules. (But if you have 2 mics, It could be OK.)
+6. Don't set `autorestart` as 'true' specially when you combine this with other voice(mic) related modules. (But if you have 2 mics, It might be OK.)
 
 ### Tip.
-- You can combine this module and [MMM-NotificationTrigger](https://github.com/eouia/MMM-NotificationTrigger) to make voice commander. (But you need so many .umdl or .pmdl to make commands)
-- You can use this module with [MMM-AssistantMk2](https://github.com/eouia/MMM-AssistantMk2) to make embeded Google Assistant. 
+- You can use this module with [MMM-AssistantMk2](https://github.com/eouia/MMM-AssistantMk2) to make embeded Google Assistant.
+```
+//Configuration for working together with `MMM-AssistantMk2 (^2.0.0)`
+
+{
+	module: "MMM-Hotword",
+	config: {
+		record: {
+			recordProgram : "arecord",  
+			device        : "plughw:1"
+		},
+		autostart:true,
+		onDetected: {
+			notification: (payload) => {
+				return "ASSISTANT_ACTIVATE"
+			},
+			payload: (payload) => {
+				return {
+					profile: payload.hotword
+				}
+			}
+		},
+	},
+},
+```
 
 
 ### Last Tested;
-- MagicMirror : v2.4.1
+- MagicMirror : v2.5.0
 - node.js : 8.11.3 & 10.x
-- Platform : Asus Tinker Board (Not Raspberry PI, I have none)
+- Platform : TinkerOS / Raspbian Stretch (You may have an install problem in Raspbian Jessie.)

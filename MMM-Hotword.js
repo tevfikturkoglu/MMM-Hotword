@@ -31,12 +31,27 @@ Module.register("MMM-Hotword", {
 			silence       : 1.0,        // seconds of silence before ending
 			verbose       : false,      // log info to the console
 			recordProgram : 'arecord',  // Defaults to 'arecord' - also supports 'rec' and 'sox'
-			device        : null        // recording device (e.g.: 'plughw:1')
+			device        : null,        // recording device (e.g.: 'plughw:1')
 
 		},
 		autostart: true,
 		autorestart: false,
 		testMic: false, //If set as true, You can test whether Mic device is working properly.
+		notifications: {
+			PAUSE: "HOTWORD_PAUSE",
+			RESUME: "HOTWORD_RESUME",
+			LISTENING : "HOTWORD_LISTENING",
+			SLEEPING : "HOTWORD_SLEEPING",
+			ERROR : "HOTWORD_ERROR",
+		},
+		onDetected: {
+			notification: (payload) => {
+				return "HOTWORD_DETECTED"
+			},
+			payload: (payload) => {
+				return payload
+			}
+		},
 	},
 
 	notificationReceived: function (notification, payload, sender) {
@@ -46,10 +61,10 @@ Module.register("MMM-Hotword", {
 					this.sendSocketNotification('RESUME')
 				}
 				break
-			case 'HOTWORD_RESUME':
+			case this.config.notifications.RESUME:
 				this.sendSocketNotification('RESUME')
 				break
-			case 'HOTWORD_PAUSE':
+			case this.config.notifications.PAUSE:
 				this.sendSocketNotification('PAUSE')
 				break
 		}
@@ -61,22 +76,30 @@ Module.register("MMM-Hotword", {
 				//do nothing
 				break
 			case 'NOT_PAUSED':
-				this.sendNotification('HOTWORD_LISTENING')
+				this.sendNotification(this.config.notifications.LISTENING)
 				break
 			case 'NOT_RESUMED':
-				this.sendNotification('HOTWORD_SLEEPING')
+				this.sendNotification(this.config.notifications.SLEEPING)
 				break
 			case 'RESUMED':
-				this.sendNotification('HOTWORD_LISTENING')
+				this.sendNotification(this.config.notifications.LISTENING)
 				break
 			case 'PAUSED':
-				this.sendNotification('HOTWORD_SLEEPING')
+				this.sendNotification(this.config.notifications.SLEEPING)
 				break
 			case 'DETECTED':
-				this.sendNotification('HOTWORD_DETECTED', payload)
+				var on = this.config.onDetected
+				var noti = (typeof on.notification == "function") ? on.notification(payload) : on.notification
+				var pl
+				if (on.payload) {
+					pl = (typeof on.payload == "function") ? on.payload(payload) : on.payload
+				} else {
+					pl = payload
+				}
+				this.sendNotification(noti, pl)
 				break
 			case 'ERROR':
-				this.sendNotification('HOTWORD_ERROR', payload)
+				this.sendNotification(this.config.notifications.ERROR, payload)
 				console.log('[HOTWORD] Error: ', payload)
 				break
 		}
@@ -85,6 +108,7 @@ Module.register("MMM-Hotword", {
 	start: function () {
 		this.isInitialized = 0
 		this.config = this.configAssignment({}, this.defaults, this.config)
+
 		this.sendSocketNotification('INIT', this.config)
 	},
 
