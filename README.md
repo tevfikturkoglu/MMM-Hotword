@@ -61,22 +61,22 @@ Below values are pre-set as default values. It means, you can put even nothing i
   module: 'MMM-Hotword',
   config: {
     snowboy: [
-	{
-		hotwords: "smartmirror", //this will be sent to other module for distinguishing which hotword is detected.
-		file: "resources/models/smart_mirror.umdl",
-		sensitivity: '0.5',
-	},
-	{
-		hotwords: "snowboy",
-		file: "resources/models/snowboy.umdl",
-		sensitivity: '0.5',
-	},
-	{
-		file: 'resources/models/jarvis.umdl',
-		sensitivity: '0.8,0.80',
-		hotwords: ['jarvis','jarvis'] //Kitt.ai changed their Jarvis UMDL, it has 2 models in one file. So weird.
-		//anyway, you can give different name for each. ['jarvis_1', 'jarvis_2']. Even though I think this is useless.
-	}
+  {
+    hotwords: "smartmirror", //this will be sent to other module for distinguishing which hotword is detected.
+    file: "resources/models/smart_mirror.umdl",
+    sensitivity: '0.5',
+  },
+  {
+    hotwords: "snowboy",
+    file: "resources/models/snowboy.umdl",
+    sensitivity: '0.5',
+  },
+  {
+    file: 'resources/models/jarvis.umdl',
+    sensitivity: '0.8,0.80',
+    hotwords: ['jarvis','jarvis'] //Kitt.ai changed their Jarvis UMDL, it has 2 models in one file. So weird.
+    //anyway, you can give different name for each. ['jarvis_1', 'jarvis_2']. Even though I think this is useless.
+  }
     ],
     record: {
       sampleRate    : 16000,      // audio sample rate
@@ -93,20 +93,20 @@ Below values are pre-set as default values. It means, you can put even nothing i
 
     // customizable notification trigger
     notifications: {
-			PAUSE: "HOTWORD_PAUSE",
-			RESUME: "HOTWORD_RESUME",
-			LISTENING : "HOTWORD_LISTENING",
-			SLEEPING : "HOTWORD_SLEEPING",
-			ERROR : "HOTWORD_ERROR",
-		},
-		onDetected: {
-			notification: (payload) => {
-				return "HOTWORD_DETECTED"
-			},
-			payload: (payload) => {
-				return payload
-			}
-		},
+      PAUSE: "HOTWORD_PAUSE",
+      RESUME: "HOTWORD_RESUME",
+      LISTENING : "HOTWORD_LISTENING",
+      SLEEPING : "HOTWORD_SLEEPING",
+      ERROR : "HOTWORD_ERROR",
+    },
+    onDetected: {
+      notification: (payload) => {
+        return "HOTWORD_DETECTED"
+      },
+      payload: (payload) => {
+        return payload
+      }
+    },
   }
 },
 
@@ -156,24 +156,24 @@ This module might broadcast some notification as results.
 //Configuration for working together with `MMM-AssistantMk2 (^2.0.0)`
 
 {
-	module: "MMM-Hotword",
-	config: {
-		record: {
-			recordProgram : "arecord",  
-			device        : "plughw:1"
-		},
-		autostart:true,
-		onDetected: {
-			notification: (payload) => {
-				return "ASSISTANT_ACTIVATE"
-			},
-			payload: (payload) => {
-				return {
-					profile: payload.hotword
-				}
-			}
-		},
-	},
+  module: "MMM-Hotword",
+  config: {
+    record: {
+      recordProgram : "arecord",  
+      device        : "plughw:1"
+    },
+    autostart:true,
+    onDetected: {
+      notification: (payload) => {
+        return "ASSISTANT_ACTIVATE"
+      },
+      payload: (payload) => {
+        return {
+          profile: payload.hotword
+        }
+      }
+    },
+  },
 },
 ```
 
