@@ -176,6 +176,17 @@ This module might broadcast some notification as results.
   },
 },
 ```
+Then, you need to modify `MMM-AssistantMk2` configuration also.
+You need to add this into `config{}` of your `MMM-AssistantMk2`
+
+```
+notifications: {
+  ASSISTANT_ACTIVATED: "HOTWORD_PAUSE",
+	ASSISTANT_DEACTIVATED: "HOTWORD_RESUME",
+},
+```
+
+
 
 ### Last Tested;
 - MagicMirror : v2.5.0
