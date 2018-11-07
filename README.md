@@ -182,7 +182,7 @@ You need to add this into `config{}` of your `MMM-AssistantMk2`
 ```
 notifications: {
   ASSISTANT_ACTIVATED: "HOTWORD_PAUSE",
-	ASSISTANT_DEACTIVATED: "HOTWORD_RESUME",
+  ASSISTANT_DEACTIVATED: "HOTWORD_RESUME",
 },
 ```
 
