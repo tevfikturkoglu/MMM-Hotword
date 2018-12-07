@@ -19,6 +19,8 @@ git pull
 
 1. Install pre-dependencies
 ```sh
+sudo update
+sudo upgrade
 sudo apt-get install libmagic-dev libatlas-base-dev
 sudo apt-get install sox libsox-fmt-all
 ```
@@ -33,6 +35,18 @@ When you fail to install `snowboy` itself.
 cd ~/MagicMirror/modules/MMM-Hotword
 npm install --save snowboy   # Sometimes it could fail, retry again.
 ```
+If fail again; try this. (Check pre-dependencies first)
+```sh
+cd ~/MagicMirror/modules/MMM-Hotword/node_modules
+rm -rf snowboy
+git clone https://github.com/Kitt-AI/snowboy.git
+cd snowboy
+npm install nan
+npm install
+
+```
+
+
 If you doubt errors are caused by different `node.JS` version, you can try to compile it by yourself.
 ```sh
 cd ~/MagicMirror/modules/MMM-Hotword/node_modules/snowboy
