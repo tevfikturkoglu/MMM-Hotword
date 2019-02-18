@@ -19,8 +19,8 @@ git pull
 
 1. Install pre-dependencies
 ```sh
-sudo update
-sudo upgrade
+sudo apt-get update
+sudo apt-get upgrade
 sudo apt-get install libmagic-dev libatlas-base-dev
 sudo apt-get install sox libsox-fmt-all
 ```
