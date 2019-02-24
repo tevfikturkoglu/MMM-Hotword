@@ -30,12 +30,16 @@ git clone https://github.com/eouia/MMM-Hotword.git
 cd MMM-Hotword
 npm install
 ```
-When you fail to install `snowboy` itself.
+
+**[Troubleshooting on installation]**
+- When you fail to install `snowboy` itself.
 ```sh
 cd ~/MagicMirror/modules/MMM-Hotword
 npm install --save snowboy   # Sometimes it could fail, retry again.
 ```
-If fail again; try this. (Check pre-dependencies first)
+
+
+- If fail again; try this. (Check pre-dependencies first)
 ```sh
 cd ~/MagicMirror/modules/MMM-Hotword/node_modules
 rm -rf snowboy
@@ -76,7 +80,7 @@ Then retry `npm install` again in the module directory again.
 
 
 
-If there is no special errors(except some warnings), you can use it. test it with `serveronly` mode.
+- If there is no special errors(except some warnings), you can use it. test it with `serveronly` mode.
 
 But maybe in `kiosk` mode, you may meet some error like this;
 ```
