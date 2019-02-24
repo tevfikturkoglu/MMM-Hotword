@@ -47,11 +47,34 @@ npm install
 ```
 
 
-If you doubt errors are caused by different `node.JS` version, you can try to compile it by yourself.
+- If you doubt errors are caused by different `node.JS` version, you can try to compile it by yourself.
 ```sh
 cd ~/MagicMirror/modules/MMM-Hotword/node_modules/snowboy
 ./node_modules/node-pre-gyp/bin/node-pre-gyp clean configure build
 ```
+
+- Or if you doubt `node-pre-gyp` version, try this;
+After git cloning;
+```
+cd ~/MagicMirror/modules/MMM-Hotword/node_modules/snowboy
+nano package.json                ## Or open the file with any TEXT editor
+```
+
+Then,
+find this and replace
+From
+```
+"node-pre-gyp": "^0.6.30"
+```
+To
+```
+"node-pre-gyp": "^0.12.0"
+```
+Then retry `npm install` again in the module directory again.
+
+
+
+
 
 If there is no special errors(except some warnings), you can use it. test it with `serveronly` mode.
 
