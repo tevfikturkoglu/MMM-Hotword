@@ -6,94 +6,44 @@ You can use this module to wake another voice assistant or to give a command to 
 This works in background, so there is no screenshot.
 
 ### UPDATED
-**1.1.0 (2018-11-4)**
-- notification configurable. (You don't need `MMM-NotificationTrigger` any more for using with `MMM-AssistantMk2(^2.0.0)`)
-- But if you want more complex action chains, you can still use `MMM-NotificationTrigger` also.
-- How to update (From previous version)
-```
-cd ~/MagicMirror/modules/MMM-Hotword
-git pull
-```
+**2.0.0 (2019-05-05)**
+- Whole new build-up
+- Some annoying dependencies are removed.
+- Installer is provided. (`installer/install.sh`)
+- Personal model trainer is porivded. (`trainer/trainer.sh`)
+- Continuous recording after hotword detection is supported (Now you can say like "Computer, volume up" without pausing between `Computer` and `volume up`)
+  - This feature could be used with `MMM-AssistantMk2 ver3.x`(Not yet released, but arrive soon)
+- Simple standalone commands could be available. (Without any Assistant, you can make own voice commands with this module standalone.)
+- More universal models are added. (`computer`, `subex`, `hey extreme` and more.)
+- Hotword detected could be displayed on screen of MM.
+
+
+#### How to update (From previous version 1.X)
+> You need to remove old MMM-Hotword directory then re-install from scratch again.
 
 ### Installation
 
-1. Install pre-dependencies
 ```sh
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get install libmagic-dev libatlas-base-dev
-sudo apt-get install sox libsox-fmt-all
-```
-1. Install Module
-```sh
+sudo apt update
+sudo apt upgrade
+sudo apt install libmagic-dev libatlas-base-dev sox libsox-fmt-all
+
+cd ~/MagicMirror/modules
 git clone https://github.com/eouia/MMM-Hotword.git
 cd MMM-Hotword
 npm install
+
+chmod +x ./installer/install.sh
+./installer/install.sh
 ```
 
-**[Troubleshooting on installation]**
-- When you fail to install `snowboy` itself.
+If you can see something with these similar on last part of installation log, Installation would be success
 ```sh
-cd ~/MagicMirror/modules/MMM-Hotword
-npm install --save snowboy   # Sometimes it could fail, retry again.
-```
 
-
-- If fail again; try this. (Check pre-dependencies first)
-```sh
-cd ~/MagicMirror/modules/MMM-Hotword/node_modules
-rm -rf snowboy
-git clone https://github.com/Kitt-AI/snowboy.git
-cd snowboy
-npm install nan
-npm install
 
 ```
 
 
-- If you doubt errors are caused by different `node.JS` version, you can try to compile it by yourself.
-```sh
-cd ~/MagicMirror/modules/MMM-Hotword/node_modules/snowboy
-./node_modules/node-pre-gyp/bin/node-pre-gyp clean configure build
-```
-
-- Or if you doubt `node-pre-gyp` version, try this;
-After git cloning;
-```
-cd ~/MagicMirror/modules/MMM-Hotword/node_modules/snowboy
-nano package.json                ## Or open the file with any TEXT editor
-```
-
-Then,
-find this and replace
-From
-```
-"node-pre-gyp": "^0.6.30"
-```
-To
-```
-"node-pre-gyp": "^0.12.0"
-```
-Then retry `npm install` again in the module directory again.
-
-
-
-
-
-- If there is no special errors(except some warnings), you can use it. test it with `serveronly` mode.
-
-But maybe in `kiosk` mode, you may meet some error like this;
-```
-Error: Cannot find module '/home/pi/MagicMirror/modules/MMM-Hotword/node_modules/snowboy/lib/node/binding/Release/electron-v2.0-linux-arm/snowboy.node'
-```
-In that case, you need to rebuild some binaries to match with Electron version.
-```sh
-cd ~/MagicMirror/modules/MMM-Hotword/node_modules/snowboy
-npm install --save-dev electron-rebuild
-npm install nan
-./node_modules/.bin/electron-rebuild   # It could takes dozens sec.
-```
-And.. those are all I can suggest to you.
 
 ### Configuration
 Below values are pre-set as default values. It means, you can put even nothing in config field.
@@ -227,9 +177,124 @@ notifications: {
 },
 ```
 
+### Default Universal models and recommended properties
+```js
+{
+  hotwords: "smart_mirror",
+  file: "smart_mirror.umdl",
+  sensitivity: "0.5",
+},
+{
+  hotwords: "computer",
+  file: "computer.umdl",
+  sensitivity: "0.6",
+},
+{
+  hotwords: "snowboy",
+  file: "snowboy.umdl",
+  sensitivity: "0.5",
+},
+{
+  hotwords: ["jarvis", "jarvis"],
+  file: "jarvis.umdl",
+  sensitivity: "0.8,0.8",
+},
+{
+  hotwords: "subex",
+  file: "subex.umdl",
+  sensitivity: "0.6",
+},
+{
+  hotwords: ["neo_ya", "neo_ya"],
+  file: "neoya.umdl",
+  sensitivity: "0.7,0.7",
+},
+{
+  hotwords: "hey_extreme",
+  file: "hey_extreme.umdl",
+  sensitivity: "0.6",
+},
+{
+  hotwords: "view_glass",
+  file: "view_glass.umdl",
+  sensitivity: "0.7",
+},
+```
+When you are using `.pmdl`, set `DetectorApplyFrontend` to `false`.
+
+For `.umdl`, When you use only`snowboy` and `smart_mirror`, `false` is better. But with other models, `true` is better.
+
+### How to make Personal model (.pmdl)
+1. Get Snowboy API token. API token can be obtained by logging into https://snowboy.kitt.ai, click on “Profile settings”.
+
+2. go to trainer directory, and modify `trainer.sh`
+```sh
+nano temp_trainer.sh
+```
+In the file, you can find where to modify.
+```sh
+############# MODIFY THE FOLLOWING #############
+# Secret user token
+TOKEN="put your snowboy API token here"
+#String, or “unknown” if we don’t know hotword name
+NAME="volume_up"
+# ar (Arabic), zh (Chinese), nl (Dutch), en (English), fr (French), dt (German), hi (Hindi), it (Italian), jp (Japanese), ko (Korean), fa (Persian), pl (Polish), pt (Portuguese), ru (Russian), es (Spanish), ot (Other)
+LANGUAGE="en"
+# 0_9, 10_19, 20_29, 30_39, 40_49, 50_59, 60+
+AGE_GROUP="40_49"
+# F/M
+GENDER="M"
+# String, your microphone type
+MICROPHONE="PS3 Eye"
+############### END OF MODIFY ##################
+```
+
+3. Record your hotword 3 times on your RPI (`.pmdl` which is created on other device, might not work)
+```sh
+rec -r 16000 -c 1 -b 16 -e signed-integer 1.wav
+rec -r 16000 -c 1 -b 16 -e signed-integer 2.wav
+rec -r 16000 -c 1 -b 16 -e signed-integer 3.wav
+```
+
+4. Then, train them
+```sh
+./temp_trainer.sh 1.wav 2.wav 3.wav volume_up.pmdl
+```
+
+5. Move `.pmdl` to `models` directory
+```sh
+mv volume_up.pmdl ../models/
+```
+
+6. Now, make `recipe` or add this to your config
+```js
+models: [
+  {
+    hotwords    : "volume_up",
+    file        : "volume_up.pmdl",
+    sensitivity : "0.5",
+  },
+],
+customCommands: {
+  "volume_up" : {
+    notificationExec: {
+      notification: "VOLUME_UP"
+    }
+  }
+},
+```
+
+### UPDATE HISTORY
+**1.1.0 (2018-11-4)**
+- notification configurable. (You don't need `MMM-NotificationTrigger` any more for using with `MMM-AssistantMk2(^2.0.0)`)
+- But if you want more complex action chains, you can still use `MMM-NotificationTrigger` also.
 
 
-### Last Tested;
-- MagicMirror : v2.5.0
-- node.js : 8.11.3 & 10.x
-- Platform : TinkerOS / Raspbian Stretch (You may have an install problem in Raspbian Jessie.)
+
+### Last Tested; (2019-05-05)
+- MagicMirror : v2.7.1
+- Tested Environment :
+  - Raspbian Stretch (Raspbian 3B+)
+  - TinkerOS (TinkerBoard)
+  - Ubuntu 18.04 (NVIDIA Jetson Nano)
+  - OSX 10.14.4 (Apple MacBookPro) / node v11.12.0 / npm v6.7.0
