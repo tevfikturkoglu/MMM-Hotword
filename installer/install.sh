@@ -1,8 +1,8 @@
 git clone https://github.com/Kitt-AI/snowboy.git
+chmod +x trainer/trainer.sh
 cd snowboy
 rm -rf .git
 cp -r resources/models ..
-chmod +x trainer/trainer.sh
 npm install -y nan node-pre-gyp
 ./node_modules/node-pre-gyp/bin/node-pre-gyp clean configure build
 npm install -y
