@@ -87,6 +87,7 @@ module.exports = NodeHelper.create({
   },
 
   activate: function() {
+    console.log("activated")
     this.b2w = null
     this.detected = null
     var models = new Models();
@@ -107,13 +108,22 @@ module.exports = NodeHelper.create({
     })
     console.log('[HOTWORD] begins.')
     this.sendSocketNotification("START")
+    var silenceTimer = 0
     this.detector
       .on('silence', ()=>{
         this.sendSocketNotification("SILENCE")
+        var now = Date.now()
+        if (this.b2w !== null) {
+          if (now - silenceTimer > this.config.mic.silence * 1000) {
+            this.stopListening()
+          }
+    		}
       })
       .on('sound', (buffer)=>{
+
         this.sendSocketNotification("SOUND", {size:buffer.length})
         if (this.b2w !== null) {
+          silenceTimer = Date.now()
           this.b2w.add(buffer)
           console.log("[HOTWORD] After Recording:", buffer.length)
         }
@@ -125,6 +135,8 @@ module.exports = NodeHelper.create({
         return
       })
       .on('hotword', (index, hotword, buffer)=>{
+        silenceTimer = Date.now()
+
         if (!this.detected) {
           this.b2w = new B2W({
             channel : this.detector.numChannels(),
@@ -136,7 +148,7 @@ module.exports = NodeHelper.create({
         this.sendSocketNotification("DETECT", {hotword:this.detected})
         return
       })
-      this.startListening()
+    this.startListening()
   },
 
   deactivate: function() {
@@ -146,8 +158,10 @@ module.exports = NodeHelper.create({
   stopListening: function() {
     this.running = false
     console.log('[HOTWORD] stops.')
-    record.stop()
+    var r = record.stop()
+    this.mic.unpipe(this.detector)
     this.mic = null
+    return
     if (this.detected) {
       if (this.b2w !== null) {
         var length = this.b2w.getAudioLength()
@@ -173,7 +187,8 @@ module.exports = NodeHelper.create({
   startListening: function () {
     this.running = true
     console.log("[HOTWORD] Detector starts listening.")
-    this.mic = record.start(this.config.mic).pipe(this.detector)
+    this.mic = record.start(this.config.mic)
+    this.mic.pipe(this.detector)
     eos(this.detector, (err) => {
       if (err) {
         this.sendSocketNotification("ERROR", {error:err})
