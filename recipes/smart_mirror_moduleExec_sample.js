@@ -7,7 +7,7 @@ var recipe = {
     },
   ],
   customCommands: {
-    "smart_mirror": {
+    "smart_mirror": { //When `smart mirror` is said, clock module will be hidden.
       moduleExec: {
         module: ["clock"],
         exec: (module, hotword, file) => {

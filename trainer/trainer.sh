@@ -3,9 +3,9 @@ ENDPOINT="https://snowboy.kitt.ai/api/v1/train/"
 
 ############# MODIFY THE FOLLOWING #############
 # Secret user token
-TOKEN="bb2e89a9764f9d3737b0a1c271ab76619c65ac16"
+TOKEN="YOUR_TOKEN"
 #String, or “unknown” if we don’t know hotword name
-NAME="SPOTIFY"
+NAME="YOUR_HOTWORD_NAME_TO_MAKE"
 # ar (Arabic), zh (Chinese), nl (Dutch), en (English), fr (French), dt (German), hi (Hindi), it (Italian), jp (Japanese), ko (Korean), fa (Persian), pl (Polish), pt (Portuguese), ru (Russian), es (Spanish), ot (Other)
 LANGUAGE="en"
 # 0_9, 10_19, 20_29, 30_39, 40_49, 50_59, 60+
@@ -13,7 +13,7 @@ AGE_GROUP="40_49"
 # F/M
 GENDER="M"
 # String, your microphone type
-MICROPHONE="PS3 Eye"
+MICROPHONE="YOUR_DEVICE_NAME"
 ############### END OF MODIFY ##################
 
 if [[ "$#" != 4 ]]; then

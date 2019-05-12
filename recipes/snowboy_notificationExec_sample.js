@@ -7,7 +7,7 @@ var recipe = {
     },
   ],
   customCommands: {
-    "snowboy": {
+    "snowboy": { // When `snowboy` is said, `SHOW_ALERT` notification will be emitted.
       notificationExec: {
         notification: "SHOW_ALERT",
         payload: (hotword, file) => {

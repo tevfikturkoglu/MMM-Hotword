@@ -1,3 +1,9 @@
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 #HOTWORD {
   height:48px;
   width:48px;
@@ -17,14 +23,34 @@
 #HOTWORD_DETECTED {
   color:#FFF;
   font-size:24px;
-  padding-left:10px;
+
+  position:relative;
+  z-index:2
 }
 
+#HOTWORD_DETECTED.detected {
+  padding:0 10px 0 10px;
+}
+
+#HOTWORD_DETECTED:before {
+  content: " ";
+  background-color:rgba(0,0,255,0.5);
+  border-radius:24px;
+  width:100%;
+  height:100%;
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:0;
+}
 
 #HOTWORD_ICON,
 #HOTWORD_DETECTED {
   display:inline-block;
 }
+
+
+
 
 #HOTWORD_ICON > * {
   display:none;
@@ -33,6 +59,7 @@
 
 #HOTWORD_ICON.start #HOTWORD_ICON_WAITING {
   display:inline-block;
+  animation: blinker 2s linear infinite;
 }
 
 #HOTWORD_ICON.sound #HOTWORD_ICON_LISTENING {
@@ -43,14 +70,10 @@
   display:inline-block;
 }
 
+
 #HOTWORD_ICON.disabled #HOTWORD_ICON_DISABLED {
   display:inline-block;
 }
-
-
-
-
-
 
 #HOTWORD_ICON.finish > * {
   display:none;

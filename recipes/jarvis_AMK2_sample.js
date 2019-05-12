@@ -7,7 +7,7 @@ var recipe = {
     },
   ],
   customCommands: {
-    "jarvis": {
+    "jarvis": { //When `jarvis` is said, MMM-AssistantMk2 will be activated.
       notificationExec: {
         notification: "ASSISTANT_ACTIVATE",
         payload: (hotword, file) => {

@@ -6,14 +6,14 @@ You can use this module to wake another voice assistant or to give a command to 
 This works in background, so there is no screenshot.
 
 ### UPDATED
-**2.0.0 (2019-05-05)**
+**2.0.0 (2019-05-12)**
 - Whole new build-up
 - Some annoying dependencies are removed.
 - Installer is provided. (`installer/install.sh`)
-- Personal model trainer is porivded. (`trainer/trainer.sh`)
+- Personal model trainer is provided. (`trainer/trainer.sh`)
 - Continuous recording after hotword detection is supported (Now you can say like "Computer, volume up" without pausing between `Computer` and `volume up`)
-  - This feature could be used with `MMM-AssistantMk2 ver3.x`(Not yet released, but arrive soon)
-- Simple standalone commands could be available. (Without any Assistant, you can make own voice commands with this module standalone.)
+  - This feature could be used with `MMM-AssistantMk2 ver3.x`(Not yet released, but will arrive soon)
+- Simple standalone commands could be available. (Without any Assistant or Speech-To-Text, you can make own voice commands with this module standalone.)
 - More universal models are added. (`computer`, `subex`, `hey extreme` and more.)
 - Hotword detected could be displayed on screen of MM.
 
@@ -22,28 +22,11 @@ This works in background, so there is no screenshot.
 > You need to remove old MMM-Hotword directory then re-install from scratch again.
 
 ### Installation
+Read [installer/README.md](installer/README.md)
 
-```sh
-sudo apt update
-sudo apt upgrade
-sudo apt install libmagic-dev libatlas-base-dev sox libsox-fmt-all
-
-cd ~/MagicMirror/modules
-git clone https://github.com/eouia/MMM-Hotword.git
-cd MMM-Hotword
-npm install
-
-chmod +x ./installer/install.sh
-./installer/install.sh
-```
-
-If you can see something with these similar on last part of installation log, Installation would be success
-```sh
-
-
-```
-
-
+### (OPTIONAL) Get your personal model (.pmdl)
+Instead using universal model, You can make your own personal model. (ex. `Hey,Dude`, `volume up`, ...)
+Read [trainer/README.md](trainer/README.md)
 
 ### Configuration
 Below values are pre-set as default values. It means, you can put even nothing in config field.
@@ -224,65 +207,7 @@ When you are using `.pmdl`, set `DetectorApplyFrontend` to `false`.
 
 For `.umdl`, When you use only`snowboy` and `smart_mirror`, `false` is better. But with other models, `true` is better.
 
-### How to make Personal model (.pmdl)
-1. Get Snowboy API token. API token can be obtained by logging into https://snowboy.kitt.ai, click on “Profile settings”.
 
-2. go to trainer directory, and modify `trainer.sh`
-```sh
-nano temp_trainer.sh
-```
-In the file, you can find where to modify.
-```sh
-############# MODIFY THE FOLLOWING #############
-# Secret user token
-TOKEN="put your snowboy API token here"
-#String, or “unknown” if we don’t know hotword name
-NAME="volume_up"
-# ar (Arabic), zh (Chinese), nl (Dutch), en (English), fr (French), dt (German), hi (Hindi), it (Italian), jp (Japanese), ko (Korean), fa (Persian), pl (Polish), pt (Portuguese), ru (Russian), es (Spanish), ot (Other)
-LANGUAGE="en"
-# 0_9, 10_19, 20_29, 30_39, 40_49, 50_59, 60+
-AGE_GROUP="40_49"
-# F/M
-GENDER="M"
-# String, your microphone type
-MICROPHONE="PS3 Eye"
-############### END OF MODIFY ##################
-```
-
-3. Record your hotword 3 times on your RPI (`.pmdl` which is created on other device, might not work)
-```sh
-rec -r 16000 -c 1 -b 16 -e signed-integer 1.wav
-rec -r 16000 -c 1 -b 16 -e signed-integer 2.wav
-rec -r 16000 -c 1 -b 16 -e signed-integer 3.wav
-```
-
-4. Then, train them
-```sh
-./temp_trainer.sh 1.wav 2.wav 3.wav volume_up.pmdl
-```
-
-5. Move `.pmdl` to `models` directory
-```sh
-mv volume_up.pmdl ../models/
-```
-
-6. Now, make `recipe` or add this to your config
-```js
-models: [
-  {
-    hotwords    : "volume_up",
-    file        : "volume_up.pmdl",
-    sensitivity : "0.5",
-  },
-],
-customCommands: {
-  "volume_up" : {
-    notificationExec: {
-      notification: "VOLUME_UP"
-    }
-  }
-},
-```
 
 ### UPDATE HISTORY
 **1.1.0 (2018-11-4)**
