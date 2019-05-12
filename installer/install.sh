@@ -1,5 +1,5 @@
-git clone https://github.com/Kitt-AI/snowboy.git
 chmod +x trainer/trainer.sh
+git clone https://github.com/Kitt-AI/snowboy.git
 cd snowboy
 rm -rf .git
 cp -r resources/models ..
