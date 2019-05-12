@@ -21,8 +21,12 @@ npm install
 chmod +x ./installer/install.sh
 ./installer/install.sh
 ```
+It will take 10~30 min. Don't power off during the installation.
 
 If you can see something with these similar on last part of installation log, Installation would be success
 ```sh
-
+Rebuild Complete
+electron-V3.0-linux-arm64  node-v64-linux-arm64
+lib/node/index.js
 ```
+`electron-V3.0-linux-arm64` or `node-v64-linux-arm64` may be different by your environment.

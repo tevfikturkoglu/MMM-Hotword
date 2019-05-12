@@ -81,7 +81,14 @@ Module.register("MMM-Hotword", {
 
   start: function () {
     this.isInitialized = 0
+    this.initConfig()
     this.sendSocketNotification('INIT', this.config)
+  },
+
+  initConfig: function() {
+    this.config.mic = Object.assign({}, this.defaults, this.config.mic)
+    this.config.icons = Object.assign({}, this.defaults, this.config.icons)
+    this.config.notifications = Object.assign({}, this.defaults, this.config.notifications)
   },
 
   getDom: function() {
