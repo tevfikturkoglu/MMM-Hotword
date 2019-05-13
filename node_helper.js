@@ -111,6 +111,7 @@ module.exports = NodeHelper.create({
     var silenceTimer = 0
     this.detector
       .on('silence', ()=>{
+        console.log("si!")
         this.sendSocketNotification("SILENCE")
         var now = Date.now()
         if (this.b2w !== null) {
@@ -120,7 +121,6 @@ module.exports = NodeHelper.create({
     		}
       })
       .on('sound', (buffer)=>{
-
         this.sendSocketNotification("SOUND", {size:buffer.length})
         if (this.b2w !== null) {
           silenceTimer = Date.now()
@@ -136,7 +136,6 @@ module.exports = NodeHelper.create({
       })
       .on('hotword', (index, hotword, buffer)=>{
         silenceTimer = Date.now()
-
         if (!this.detected) {
           this.b2w = new B2W({
             channel : this.detector.numChannels(),
@@ -161,7 +160,6 @@ module.exports = NodeHelper.create({
     var r = record.stop()
     this.mic.unpipe(this.detector)
     this.mic = null
-    return
     if (this.detected) {
       if (this.b2w !== null) {
         var length = this.b2w.getAudioLength()
@@ -189,12 +187,14 @@ module.exports = NodeHelper.create({
     console.log("[HOTWORD] Detector starts listening.")
     this.mic = record.start(this.config.mic)
     this.mic.pipe(this.detector)
+
     eos(this.detector, (err) => {
       if (err) {
         this.sendSocketNotification("ERROR", {error:err})
       }
       this.stopListening()
     })
+
   },
 
   finish: function(hotword = null, file = null) {

@@ -41,9 +41,9 @@ Module.register("MMM-Hotword", {
 
     icons: { //https://iconify.design/icon-sets/
       waiting: "uil-comment-dots",
-      listening: "uil-comment-question",
+      listening: "uil-comment-dots",
       detected: "uil-comment-exclamation",
-      disabled: "uil-comment-slash",
+      finished: "uil-comment-exclamation",
     },
 
 
@@ -111,7 +111,7 @@ Module.register("MMM-Hotword", {
     var i4 = document.createElement("span")
     i4.id = "HOTWORD_ICON_DISABLED"
     i4.className = "iconify"
-    i4.dataset.icon = this.config.icons.disabled
+    i4.dataset.icon = this.config.icons.finished
     icon.appendChild(i1)
     icon.appendChild(i2)
     icon.appendChild(i3)
@@ -150,9 +150,9 @@ Module.register("MMM-Hotword", {
   socketNotificationReceived: function (notification, payload) {
     switch(notification) {
       case "START":
-      case "FINISH":
       case "DETECT":
       case "SOUND":
+      case "FINISH":
         this.status(notification, payload)
         break
       case 'INITIALIZED':
@@ -261,6 +261,7 @@ Module.register("MMM-Hotword", {
     }
     if (noti == "FINISH") {
       if (!payload.detected) {
+        console.log("restart???")
         this.sendSocketNotification('RESUME')
       } else {
         this.sendSocketNotification('PAUSE')
@@ -269,7 +270,7 @@ Module.register("MMM-Hotword", {
       }
     }
     if (noti == "DISABLED") {
-      icon.className = "disabled"
+      icon.className = "finished"
     //  text.innerHTML = ""
     }
   },
