@@ -155,44 +155,46 @@ module.exports = NodeHelper.create({
   stopListening: function() {
     this.running = false
     console.log('[HOTWORD] stops.')
-    var r = record.stop()
     this.mic.unpipe(this.detector)
     this.mic = null
-    if (this.detected) {
-      if (this.b2w !== null) {
-        var length = this.b2w.getAudioLength()
-        if (length < 8192) {
-          console.log("[HOTWORD] After Recording is too short")
-          this.b2w.destroy()
-          this.b2w = null
-          this.finish(this.detected, null)
-        } else {
-          console.log("[HOTWORD] After Recording finised. size:", length)
-          this.b2w.writeFile(path.resolve(__dirname, this.afterRecordingFile), (file)=>{
-            this.finish(this.detected, this.afterRecordingFile)
-          })
-        }
-      } else {
-        this.finish(this.detected, null)
-      }
-    } else {
-      this.finish()
-    }
+    var r = record.stop()
   },
 
   startListening: function () {
     this.running = true
     console.log("[HOTWORD] Detector starts listening.")
-    this.mic = record.start(this.config.mic)
+    this.mic = record.start(this.config.mic, ()=>{
+      console.log("callback!")
+      if (this.detected) {
+        if (this.b2w !== null) {
+          var length = this.b2w.getAudioLength()
+          if (length < 8192) {
+            console.log("[HOTWORD] After Recording is too short")
+            this.b2w.destroy()
+            this.b2w = null
+            this.finish(this.detected, null)
+          } else {
+            console.log("[HOTWORD] After Recording finised. size:", length)
+            this.b2w.writeFile(path.resolve(__dirname, this.afterRecordingFile), (file)=>{
+              this.finish(this.detected, this.afterRecordingFile)
+            })
+          }
+        } else {
+          this.finish(this.detected, null)
+        }
+      } else {
+        this.finish()
+      }
+    })
     this.mic.pipe(this.detector)
-
+/*
     eos(this.detector, (err) => {
       if (err) {
         this.sendSocketNotification("ERROR", {error:err})
       }
       this.stopListening()
     })
-
+*/
   },
 
   finish: function(hotword = null, file = null) {
@@ -203,6 +205,7 @@ module.exports = NodeHelper.create({
       pl = {detected:false}
     }
     this.detected = null
+    console.log("FINISH", pl)
     this.sendSocketNotification("FINISH", pl)
   },
 })

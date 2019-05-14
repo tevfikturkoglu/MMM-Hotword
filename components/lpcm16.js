@@ -10,7 +10,7 @@ var spawn = require('child_process').spawn
 var cp // Recording process
 
 // returns a Readable stream
-exports.start = function (options) {
+exports.start = function (options, cb=()=>{}) {
   cp = null // Empty out possibly dead recording process
 
   var defaults = {
@@ -111,6 +111,7 @@ exports.start = function (options) {
 
     rec.on('end', function () {
       console.timeEnd('[LPCM16] End Recording')
+      cb()
     })
   }
   return rec
