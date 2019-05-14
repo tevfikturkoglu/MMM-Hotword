@@ -87,7 +87,6 @@ module.exports = NodeHelper.create({
   },
 
   activate: function() {
-    console.log("activated")
     this.b2w = null
     this.detected = null
     var models = new Models();
@@ -111,7 +110,6 @@ module.exports = NodeHelper.create({
     var silenceTimer = 0
     this.detector
       .on('silence', ()=>{
-        console.log("si!")
         this.sendSocketNotification("SILENCE")
         var now = Date.now()
         if (this.b2w !== null) {

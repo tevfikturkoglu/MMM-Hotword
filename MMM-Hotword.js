@@ -261,7 +261,6 @@ Module.register("MMM-Hotword", {
     }
     if (noti == "FINISH") {
       if (!payload.detected) {
-        console.log("restart???")
         this.sendSocketNotification('RESUME')
       } else {
         this.sendSocketNotification('PAUSE')
