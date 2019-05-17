@@ -101,16 +101,16 @@ exports.start = function (options, cb=()=>{}) {
   var rec = cp.stdout
 
   if (options.verbose) {
-    console.log('[LPCM16] Recording', options.channels, 'channels with sample rate',
+    console.log('[HOTWORD:LPCM16] Start listening', options.channels, 'channels with sample rate',
         options.sampleRate)
-    console.time('[LPCM16] End Recording')
+    console.time('[HOTWORD:LPCM16] End listening')
 
     rec.on('data', function (data) {
-      console.log('[LPCM16] Recording %d bytes', data.length)
+      console.log('[HOTWORD:LPCM16] Listening %d bytes', data.length)
     })
 
     rec.on('end', function () {
-      console.timeEnd('[LPCM16] End Recording')
+      console.timeEnd('[HOTWORD:LPCM16] End listening')
       cb()
     })
   }
@@ -119,7 +119,7 @@ exports.start = function (options, cb=()=>{}) {
 
 exports.stop = function () {
   if (!cp) {
-    console.log('[LPCM16] STOP is called without STARTING')
+    console.log('[HOTWORD:LPCM16] STOP is called without STARTING')
     return false
   }
 

@@ -28,9 +28,9 @@ class B2W {
   writeFile(file, callback=(file)=>{}) {
     fs.writeFile(file, this.audioBuffer, (err)=>{
       if (err) {
-        console.log("[B2W] WAV_FILE_CREATION_ERROR:", err)
+        console.log("[HOTWORD:B2W] WAV_FILE_CREATION_ERROR:", err)
       }
-      console.log("[B2W] WAV_FILE_CREATED:", file, this.audioBuffer.length)
+      console.log("[HOTWORD:B2W] WAV_FILE_CREATED:", file, this.audioBuffer.length)
       callback(file)
     })
   }

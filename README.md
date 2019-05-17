@@ -19,14 +19,22 @@ This works in background, so there is no screenshot.
 
 
 #### How to update (From previous version 1.X)
-> You need to remove old MMM-Hotword directory then re-install from scratch again.
+- You need to remove old MMM-Hotword directory then re-install from scratch again.
+- Configuration should be re-written. It is not compatible with old version.
+
 
 ### Installation
-Read [installer/README.md](installer/README.md)
+Read [documents/install.md](documents/install.md)
 
 ### (OPTIONAL) Get your personal model (.pmdl)
 Instead using universal model, You can make your own personal model. (ex. `Hey,Dude`, `volume up`, ...)
-Read [trainer/README.md](trainer/README.md)
+Read [documents/trainer.md](documents/trainer.md)
+- Personal model is dedicated to each specific vocal pattern. You cannot share your model with others.
+- Personal model should be created on target device and mic. It might not work on other device.
+
+### Or.. For universal model (.umdl)
+Read [documents/models.md](documents/models.md)
+
 
 ### Configuration
 Below values are pre-set as default values. It means, you can put even nothing in config field.
@@ -160,52 +168,6 @@ notifications: {
 },
 ```
 
-### Default Universal models and recommended properties
-```js
-{
-  hotwords: "smart_mirror",
-  file: "smart_mirror.umdl",
-  sensitivity: "0.5",
-},
-{
-  hotwords: "computer",
-  file: "computer.umdl",
-  sensitivity: "0.6",
-},
-{
-  hotwords: "snowboy",
-  file: "snowboy.umdl",
-  sensitivity: "0.5",
-},
-{
-  hotwords: ["jarvis", "jarvis"],
-  file: "jarvis.umdl",
-  sensitivity: "0.8,0.8",
-},
-{
-  hotwords: "subex",
-  file: "subex.umdl",
-  sensitivity: "0.6",
-},
-{
-  hotwords: ["neo_ya", "neo_ya"],
-  file: "neoya.umdl",
-  sensitivity: "0.7,0.7",
-},
-{
-  hotwords: "hey_extreme",
-  file: "hey_extreme.umdl",
-  sensitivity: "0.6",
-},
-{
-  hotwords: "view_glass",
-  file: "view_glass.umdl",
-  sensitivity: "0.7",
-},
-```
-When you are using `.pmdl`, set `DetectorApplyFrontend` to `false`.
-
-For `.umdl`, When you use only`snowboy` and `smart_mirror`, `false` is better. But with other models, `true` is better.
 
 
 

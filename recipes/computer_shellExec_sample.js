@@ -6,11 +6,11 @@ var recipe = {
       sensitivity : "0.6",
     },
   ],
-  customCommands: {
+  commands: {
     "computer": { //When "computer" is said, `pm2 stop all` shell command will be executed.
       shellExec: {
         exec: (hotword, file) => {
-          return "pm2 stop all"
+          return "ls -al"
         }
       }
     }

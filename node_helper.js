@@ -2,16 +2,16 @@
 // Module : MMM-Hotword
 //
 
-'use strict'
+"use strict"
 
-const path = require('path')
-
+const path = require("path")
+const exec = require("child_process").exec
 const record = require("./components/lpcm16.js")
 const B2W = require("./components/b2w.js")
-const Detector = require('./snowboy/lib/node/index.js').Detector
-const Models = require('./snowboy/lib/node/index.js').Models
-const fs = require('fs')
-const eos = require('end-of-stream')
+const Detector = require("./snowboy/lib/node/index.js").Detector
+const Models = require("./snowboy/lib/node/index.js").Models
+const fs = require("fs")
+//const eos = require("end-of-stream")
 
 
 var NodeHelper = require("node_helper")
@@ -43,8 +43,8 @@ module.exports = NodeHelper.create({
         if (p.hasOwnProperty("models") && Array.isArray(p.models)) {
           this.config.models = [].concat(this.config.models, p.models)
         }
-        if (p.hasOwnProperty("customCommands") && typeof p.customCommands == "object") {
-          this.config.customCommands = Object.assign({}, this.config.customCommands, p.customCommands)
+        if (p.hasOwnProperty("commands") && typeof p.commands == "object") {
+          this.config.commands = Object.assign({}, this.config.commands, p.commands)
         }
         this.sendSocketNotification("LOAD_RECIPE", JSON.stringify(p, replacer, 2))
         console.log("[HOTWORD] Recipe is loaded:", recipes[i])
@@ -64,24 +64,32 @@ module.exports = NodeHelper.create({
 
   socketNotificationReceived: function (notification, payload) {
     switch(notification) {
-      case 'INIT':
+      case "INIT":
         this.initializeAfterLoading(payload)
         break
-      case 'RESUME':
+      case "RESUME":
         if (!this.running) {
           this.activate()
-          this.sendSocketNotification('RESUMED')
+          this.sendSocketNotification("RESUMED")
         } else {
-          this.sendSocketNotification('ALREADY_RESUMED')
+          this.sendSocketNotification("ALREADY_RESUMED")
         }
         break
-      case 'PAUSE':
+      case "PAUSE":
         if (this.running) {
           this.deactivate()
-          this.sendSocketNotification('PAUSED')
+          this.sendSocketNotification("PAUSED")
         } else {
-          this.sendSocketNotification('ALREADY_PAUSED')
+          this.sendSocketNotification("ALREADY_PAUSED")
         }
+        break
+      case "SHELL_EXEC":
+        exec (payload, (e,so,se)=> {
+          console.log("[HOTWORD] shellExec command:", payload)
+          if (so) console.log("[HOTWORD] shellExec stdOut:", so)
+          if (se) console.log("[HOTWORD] shellExec stdErr:", se)
+          if (e) console.log("[HOTWORD] shellExec error:", e)
+        })
         break
     }
   },
@@ -102,14 +110,14 @@ module.exports = NodeHelper.create({
     this.detector = new Detector({
       resource: path.resolve(__dirname, "snowboy/resources/common.res"),
       models: models,
-      audioGain: this.config.DetectorAudioGain,
-      applyFrontend: this.config.DetectorApplyFrontend
+      audioGain: this.config.detectorAudioGain,
+      applyFrontend: this.config.detectorApplyFrontend
     })
-    console.log('[HOTWORD] begins.')
+    console.log("[HOTWORD] begins.")
     this.sendSocketNotification("START")
     var silenceTimer = 0
     this.detector
-      .on('silence', ()=>{
+      .on("silence", ()=>{
         this.sendSocketNotification("SILENCE")
         var now = Date.now()
         if (this.b2w !== null) {
@@ -118,7 +126,7 @@ module.exports = NodeHelper.create({
           }
     		}
       })
-      .on('sound', (buffer)=>{
+      .on("sound", (buffer)=>{
         this.sendSocketNotification("SOUND", {size:buffer.length})
         if (this.b2w !== null) {
           silenceTimer = Date.now()
@@ -126,13 +134,13 @@ module.exports = NodeHelper.create({
           console.log("[HOTWORD] After Recording:", buffer.length)
         }
       })
-      .on('error', (err)=>{
-        console.log('[HOTWORD] Detector Error', err)
+      .on("error", (err)=>{
+        console.log("[HOTWORD] Detector Error", err)
         this.sendSocketNotification("ERROR", {error:err})
         this.stopListening()
         return
       })
-      .on('hotword', (index, hotword, buffer)=>{
+      .on("hotword", (index, hotword, buffer)=>{
         silenceTimer = Date.now()
         if (!this.detected) {
           this.b2w = new B2W({
@@ -154,7 +162,7 @@ module.exports = NodeHelper.create({
 
   stopListening: function() {
     this.running = false
-    console.log('[HOTWORD] stops.')
+    console.log("[HOTWORD] stops.")
     this.mic.unpipe(this.detector)
     this.mic = null
     var r = record.stop()
@@ -164,7 +172,7 @@ module.exports = NodeHelper.create({
     this.running = true
     console.log("[HOTWORD] Detector starts listening.")
     this.mic = record.start(this.config.mic, ()=>{
-      console.log("callback!")
+      this.deactivate()
       if (this.detected) {
         if (this.b2w !== null) {
           var length = this.b2w.getAudioLength()
@@ -198,6 +206,7 @@ module.exports = NodeHelper.create({
   },
 
   finish: function(hotword = null, file = null) {
+    this.running = false
     var pl = {}
     if (hotword) {
       pl = {detected:true, hotword:hotword, file:file}
@@ -205,7 +214,7 @@ module.exports = NodeHelper.create({
       pl = {detected:false}
     }
     this.detected = null
-    console.log("FINISH", pl)
+    console.log("[HOTWORD] Final Result:", pl)
     this.sendSocketNotification("FINISH", pl)
   },
 })

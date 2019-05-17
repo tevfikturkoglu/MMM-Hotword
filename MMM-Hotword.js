@@ -5,8 +5,8 @@
 
 Module.register("MMM-Hotword", {
   defaults: {
-    DetectorAudioGain: 2.0,
-    DetectorApplyFrontend: true, // When you are using `.pmdl`, set this to `false`.
+    detectorAudioGain: 2.0,
+    detectorApplyFrontend: true, // When you are using `.pmdl`, set this to `false`.
     // For `.umdl`, When you use only`snowboy` and `smart_mirror`, `false` is better. But with other models, `true` is better.
     mic: {
       recordProgram : "rec", //record prgram, `rec`, `arecord`, `sox`, `parec` is available
@@ -21,7 +21,7 @@ Module.register("MMM-Hotword", {
     },
     recipes: [],
     models: [],
-    customCommands: {},
+    commands: {},
     defaultCommand: {
       notificationExec: {
         notification: "HOTWORD_DETECTED",
@@ -40,10 +40,9 @@ Module.register("MMM-Hotword", {
     //When you use this module with `MMM-CalendarExt2`, `MMM-Spotify` or any other `iconify` used modules together, Set this to null.
 
     icons: { //https://iconify.design/icon-sets/
-      waiting: "uil-comment-dots",
-      listening: "uil-comment-dots",
+      waiting: "uil-comment-message",
       detected: "uil-comment-exclamation",
-      finished: "uil-comment-exclamation",
+      finished: "uil-comment-dots",
     },
 
 
@@ -101,21 +100,16 @@ Module.register("MMM-Hotword", {
     i1.className = "iconify"
     i1.dataset.icon = this.config.icons.waiting
     var i2 = document.createElement("span")
-    i2.id = "HOTWORD_ICON_LISTENING"
+    i2.id = "HOTWORD_ICON_DETECTED"
     i2.className = "iconify"
-    i2.dataset.icon = this.config.icons.listening
+    i2.dataset.icon = this.config.icons.detected
     var i3 = document.createElement("span")
-    i3.id = "HOTWORD_ICON_DETECTED"
+    i3.id = "HOTWORD_ICON_DISABLED"
     i3.className = "iconify"
-    i3.dataset.icon = this.config.icons.detected
-    var i4 = document.createElement("span")
-    i4.id = "HOTWORD_ICON_DISABLED"
-    i4.className = "iconify"
-    i4.dataset.icon = this.config.icons.finished
+    i3.dataset.icon = this.config.icons.finished
     icon.appendChild(i1)
     icon.appendChild(i2)
     icon.appendChild(i3)
-    icon.appendChild(i4)
     dom.appendChild(icon)
     var text = document.createElement("div")
     text.id = "HOTWORD_DETECTED"
@@ -184,8 +178,8 @@ Module.register("MMM-Hotword", {
         if (p.hasOwnProperty("models") && Array.isArray(p.models)) {
           this.config.models = [].concat(this.config.models, p.models)
         }
-        if (p.hasOwnProperty("customCommands") && typeof p.customCommands == "object") {
-          this.config.customCommands = Object.assign({}, this.config.customCommands, p.customCommands)
+        if (p.hasOwnProperty("commands") && typeof p.commands == "object") {
+          this.config.commands = Object.assign({}, this.config.commands, p.commands)
         }
       break
     }
@@ -198,8 +192,8 @@ Module.register("MMM-Hotword", {
   },
 
   doCommand: function(hotword, file) {
-    var command = (this.config.customCommands.hasOwnProperty(hotword))
-      ? this.config.customCommands[hotword]
+    var command = (this.config.commands.hasOwnProperty(hotword))
+      ? this.config.commands[hotword]
       : this.config.defaultCommand
     if (command.hasOwnProperty("notificationExec")) {
       var ex = command.notificationExec
@@ -248,18 +242,15 @@ Module.register("MMM-Hotword", {
       text.className = ""
       icon.className = "start"
     }
-    if (noti == "SOUND") {
-      if (text.innerHTML) return
-      icon.className = "sound"
-    }
     if (noti == "DETECT") {
       icon.className = "detected"
-      if (this.config.customCommands.hasOwnProperty(payload.hotword)) {
+      if (this.config.commands.hasOwnProperty(payload.hotword)) {
         text.innerHTML = payload.hotword
         text.className = "detected"
       }
     }
     if (noti == "FINISH") {
+      console.log(noti, payload)
       if (!payload.detected) {
         this.sendSocketNotification('RESUME')
       } else {

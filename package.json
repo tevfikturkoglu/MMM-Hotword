@@ -17,7 +17,5 @@
   "bugs": {
     "url": "https://github.com/eouia/MMM-Hotword/issues"
   },
-  "dependencies": {
-    "end-of-stream": "^1.4.1"
-  }
+  "dependencies": {}
 }

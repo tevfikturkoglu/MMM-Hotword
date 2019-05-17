@@ -23,34 +23,15 @@
 #HOTWORD_DETECTED {
   color:#FFF;
   font-size:24px;
-
-  position:relative;
-  z-index:2
+  display:none;
 }
 
 #HOTWORD_DETECTED.detected {
   padding:0 10px 0 10px;
-}
-
-#HOTWORD_DETECTED:before {
-  content: " ";
   background-color:rgba(255,255,255,0.5);
   border-radius:24px;
-  width:100%;
-  height:100%;
-  position:absolute;
-  top:0;
-  left:0;
-  z-index:0;
-}
-
-#HOTWORD_ICON,
-#HOTWORD_DETECTED {
   display:inline-block;
 }
-
-
-
 
 #HOTWORD_ICON > * {
   display:none;
@@ -62,10 +43,6 @@
   animation: blinker 2s linear infinite;
 }
 
-#HOTWORD_ICON.sound #HOTWORD_ICON_LISTENING {
-  display:inline-block;
-}
-
 #HOTWORD_ICON.detected #HOTWORD_ICON_DETECTED {
   display:inline-block;
 }
@@ -74,11 +51,3 @@
 #HOTWORD_ICON.finished #HOTWORD_ICON_DISABLED {
   display:inline-block;
 }
-/*
-#HOTWORD_ICON.finish > * {
-  display:none;
-}
-#HOTWORD_ICON.finish #HOTWORD_ICON_WAITING {
-  display:inline-block;
-}
-*/

@@ -6,12 +6,12 @@ var recipe = {
       sensitivity : "0.5",
     },
   ],
-  customCommands: {
+  commands: {
     "snowboy": { // When `snowboy` is said, `SHOW_ALERT` notification will be emitted.
       notificationExec: {
         notification: "SHOW_ALERT",
         payload: (hotword, file) => {
-          return {"message": `Detected:${hotword}`, timeout:2000}
+          return {"message": `Detected:${hotword}`, timer:2000}
         }
       }
     }
