@@ -44,3 +44,5 @@
 When you are using `.pmdl`, set `detectorApplyFrontend` to `false`.
 
 For `.umdl`, When you use only`snowboy` and `smart_mirror`, `false` is better. But with other models, `true` is better.
+
+Basically, just leave it unless you have some problem to detect hotwords.

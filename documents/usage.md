@@ -190,4 +190,4 @@ Activation & Deactivation may be needed when you are using this module with othe
 
 
 ## With MMM-AssistantMk2 (ver 3.x)
-Not yet released.
+MMM-AssistantMk2 (ver 3.x) is not yet released. I'll add later
