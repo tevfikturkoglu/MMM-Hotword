@@ -9,7 +9,7 @@
     mic: {
       recordProgram: "arecord",
       device: "plughw:1"
-    }
+    },
     models: [
       {
         hotwords    : "computer",
@@ -24,7 +24,8 @@
           payload: (detected, afterRecord) => {
             return {profile:"default"}
           }
-        }
+        },
+        restart:false;
       }
     }
   }
