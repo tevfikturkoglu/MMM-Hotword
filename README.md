@@ -5,7 +5,7 @@ You can use this module to wake another voice assistant or to give a command to 
 ### Screenshot
 ![screenshot](resources/screenshot.png)
 
-### UPDATED
+### UPDATES
 **2.0.0 (2019-05-19)**
 - Whole new build-up
 - Some annoying dependencies are removed.
