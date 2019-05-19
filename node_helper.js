@@ -2,112 +2,215 @@
 // Module : MMM-Hotword
 //
 
-'use strict'
+"use strict"
 
-const path = require('path')
+const path = require("path")
+const exec = require("child_process").exec
+const Record = require("./components/lpcm16.js")
+const B2W = require("./components/b2w.js")
+const Detector = require("./snowboy/lib/node/index.js").Detector
+const Models = require("./snowboy/lib/node/index.js").Models
+const fs = require("fs")
+//const eos = require("end-of-stream")
 
-const record = require('node-record-lpcm16')
-const Detector = require('snowboy').Detector
-const Models = require('snowboy').Models
 
 var NodeHelper = require("node_helper")
 
 module.exports = NodeHelper.create({
   start: function () {
-    console.log(this.name + " started");
+    console.log("[HOTWORD] MMM-Hotword starts");
     this.config = {}
-    this.status = 'OFF'
-    this.restart = false
+    this.models = []
+    this.mic = null
+    this.detector = null
+    this.b2w = null
+    this.afterRecordingFile = "temp/afterRecording.wav"
+    this.detected = null
+    this.running = false
+  },
+
+  loadRecipes: function(callback=()=>{}) {
+    let replacer = (key, value) => {
+      if (typeof value == "function") {
+        return "__FUNC__" + value.toString()
+      }
+      return value
+    }
+    var recipes = this.config.recipes
+    for (var i = 0; i < recipes.length; i++) {
+      try {
+        var p = require("./recipes/" + recipes[i]).recipe
+        if (p.hasOwnProperty("models") && Array.isArray(p.models)) {
+          this.config.models = [].concat(this.config.models, p.models)
+        }
+        if (p.hasOwnProperty("commands") && typeof p.commands == "object") {
+          this.config.commands = Object.assign({}, this.config.commands, p.commands)
+        }
+        this.sendSocketNotification("LOAD_RECIPE", JSON.stringify(p, replacer, 2))
+        console.log("[HOTWORD] Recipe is loaded:", recipes[i])
+      } catch (e) {
+        console.log("[HOTWORD] Recipe error:", e)
+      }
+    }
+    callback()
   },
 
   initializeAfterLoading: function (config) {
     this.config = config
-    this.restart = this.config.autorestart
+    this.loadRecipes(()=>{
+      this.sendSocketNotification("INITIALIZED")
+    })
   },
 
   socketNotificationReceived: function (notification, payload) {
     switch(notification) {
-
-      case 'INIT':
+      case "INIT":
         this.initializeAfterLoading(payload)
-        this.sendSocketNotification('INITIALIZED')
         break
-      case 'RESUME':
-        if (this.status == 'OFF') {
-          this.status = 'ON'
+      case "RESUME":
+        if (!this.running) {
           this.activate()
-          this.sendSocketNotification('RESUMED')
+          this.sendSocketNotification("RESUMED")
         } else {
-          this.sendSocketNotification('NOT_RESUMED')
+          this.sendSocketNotification("ALREADY_RESUMED")
         }
         break
-      case 'PAUSE':
-        if (this.status == 'ON') {
-          this.status = 'OFF'
+      case "PAUSE":
+        if (this.running) {
           this.deactivate()
-          this.sendSocketNotification('PAUSED')
+          this.sendSocketNotification("PAUSED")
         } else {
-          this.sendSocketNotification('NOT_PAUSED')
+          this.sendSocketNotification("ALREADY_PAUSED")
         }
+        break
+      case "SHELL_EXEC":
+        exec (payload, (e,so,se)=> {
+          console.log("[HOTWORD] shellExec command:", payload)
+          if (so) console.log("[HOTWORD] shellExec stdOut:", so)
+          if (se) console.log("[HOTWORD] shellExec stdErr:", se)
+          if (e) console.log("[HOTWORD] shellExec error:", e)
+        })
         break
     }
   },
 
   activate: function() {
-    var testMic = this.config.testMic
+    this.b2w = null
+    this.detected = null
     var models = new Models();
-    this.config.snowboy.forEach((model)=>{
-      model.file = path.resolve(__dirname, model.file)
+    var modelPath = path.resolve(__dirname, "models")
+    if (this.config.models.length == 0) {
+      console.log("[HOTWORD] No model to load")
+      return
+    }
+    this.config.models.forEach((model)=>{
+      model.file = path.resolve(modelPath, model.file)
       models.add(model)
     })
-    var mic = record.start(this.config.record)
-    var detector = new Detector({
-      resource: path.resolve(__dirname, "resources/common.res"),
+    this.detector = new Detector({
+      resource: path.resolve(__dirname, "snowboy/resources/common.res"),
       models: models,
-      audioGain: 2.0,
+      audioGain: this.config.detectorAudioGain,
+      applyFrontend: this.config.detectorApplyFrontend
     })
-    console.log('[HOTWORD] begins listening.')
-    detector
-      .on('silence', ()=>{
-        if (testMic) {
-          console.log("[HOTWORD] Still Silence.")
-        }
-        //do nothing
+    console.log("[HOTWORD] begins.")
+    this.sendSocketNotification("START")
+    var silenceTimer = 0
+    var silenceLimit = this.config.mic.silence * 1000
+    this.detector
+      .on("silence", ()=>{
+        var now = Date.now()
+        //console.log(".", now - silenceTimer) //leave this to check recording status
+        this.sendSocketNotification("SILENCE")
+        if (this.b2w !== null) {
+          if (now - silenceTimer > silenceLimit) {
+            this.stopListening()
+          }
+    		}
       })
-      .on('sound', (buffer)=>{
-        if (testMic) {
-          console.log("[HOTWORD] Sound Captured.")
+      .on("sound", (buffer)=>{
+        //console.log("#") //leave this to check recording status
+        this.sendSocketNotification("SOUND", {size:buffer.length})
+        if (this.b2w !== null) {
+          silenceTimer = Date.now()
+          this.b2w.add(buffer)
+          console.log("[HOTWORD] After Recording:", buffer.length)
         }
-        //do nothing
       })
-      .on('error', (err)=>{
-        console.log('[HOTWORD] Detector Error', err)
+      .on("error", (err)=>{
+        console.log("[HOTWORD] Detector Error", err)
+        this.sendSocketNotification("ERROR", {error:err})
         this.stopListening()
-        mic = null
-        this.sendSocketNotification('ERROR', 'DETECTOR')
         return
       })
-      .on('hotword', (index, hotword, buffer)=>{
-        console.log('[HOTWORD] << ', hotword, ' >> is detected.')
-        if (this.restart == false) {
-          this.stopListening()
-          mic = null
+      .on("hotword", (index, hotword, buffer)=>{
+        silenceTimer = Date.now()
+        if (!this.detected) {
+          this.b2w = new B2W({
+            channel : this.detector.numChannels(),
+            sampleRate: this.detector.sampleRate()
+          })
         }
-        this.sendSocketNotification('DETECTED', {index:index, hotword:hotword})
+        this.detected = (this.detected) ? this.detected + "-" + hotword : hotword
+        console.log("[HOTWORD] Detected:", this.detected)
+        this.sendSocketNotification("DETECT", {hotword:this.detected})
         return
       })
-
-    mic.pipe(detector);
+    this.startListening()
   },
 
   deactivate: function() {
     this.stopListening()
-
   },
 
   stopListening: function() {
-    console.log('[HOTWORD] stops listening')
-    record.stop()
-    this.status = 'OFF'
-  }
+    if (!this.mic) return
+    this.running = false
+    console.log("[HOTWORD] stops.")
+    this.mic.stop()
+    this.mic = null
+  },
+
+  afterListening: function() {
+    if (this.detected) {
+      if (this.b2w !== null) {
+        var length = this.b2w.getAudioLength()
+        if (length < 8192) {
+          console.log("[HOTWORD] After Recording is too short")
+          this.b2w.destroy()
+          this.b2w = null
+          this.finish(this.detected, null)
+        } else {
+          console.log("[HOTWORD] After Recording finised. size:", length)
+          this.b2w.writeFile(path.resolve(__dirname, this.afterRecordingFile), (file)=>{
+            this.finish(this.detected, this.afterRecordingFile)
+          })
+        }
+      } else {
+        this.finish(this.detected, null)
+      }
+    } else {
+      this.finish()
+    }
+  },
+
+  startListening: function () {
+    this.running = true
+    console.log("[HOTWORD] Detector starts listening.")
+    this.mic = new Record(this.config.mic, this.detector, ()=>{this.afterListening()})
+    this.mic.start()
+  },
+
+  finish: function(hotword = null, file = null) {
+    this.running = false
+    var pl = {}
+    if (hotword) {
+      pl = {detected:true, hotword:hotword, file:file}
+    } else {
+      pl = {detected:false}
+    }
+    this.detected = null
+    console.log("[HOTWORD] Final Result:", pl)
+    this.sendSocketNotification("FINISH", pl)
+  },
 })
