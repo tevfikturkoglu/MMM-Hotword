@@ -4,7 +4,7 @@
 
 2. go to trainer directory, and modify `trainer.sh`
 ```sh
-nano temp_trainer.sh
+nano trainer.sh
 ```
 In the file, you can find where to modify.
 ```sh
@@ -24,7 +24,7 @@ MICROPHONE="PS3 Eye"
 ############### END OF MODIFY ##################
 ```
 
-3. Record your hotword 3 times on your RPI (`.pmdl` which is created on other device, might not work)
+3. Record your hotword(in this case, "volume up") 3 times on your RPI (`.pmdl` which is created on other device, might not work)
 ```sh
 rec -r 16000 -c 1 -b 16 -e signed-integer 1.wav
 rec -r 16000 -c 1 -b 16 -e signed-integer 2.wav
@@ -33,8 +33,9 @@ rec -r 16000 -c 1 -b 16 -e signed-integer 3.wav
 
 4. Then, train them
 ```sh
-./temp_trainer.sh 1.wav 2.wav 3.wav volume_up.pmdl
+./trainer.sh 1.wav 2.wav 3.wav volume_up.pmdl
 ```
+You might get `data.json` and `voulme_up.pmdl`.
 
 5. Move `.pmdl` to `models` directory
 ```sh

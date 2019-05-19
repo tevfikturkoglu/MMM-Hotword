@@ -20,9 +20,9 @@ commands: {
 }
 ```
 - When your `HOTWORD` is detected, defined Executable command will be triggered.
-- If `restart` is set as `false`(default is `true`), after command execution, `MMM-Hotword` will be paused. If you want to restart, you need notification "HOTWORD_RESUME".
-  This `restart:false` is useful when your command activate sound-related features(e.g: music play) and you don't want to be interfered.
-- This module can detect sequential hotwords at a time. When you say "snowboy blah blah jarvis blah blah", the detector could catch `"snowboy-jarvis"` as hotword. you can use this `snowboy-jarvis` as your command name.
+- If `restart` is set as `false`(default is `true`), after command execution `MMM-Hotword` will be paused. If you want to restart, you need notification `HOTWORD_RESUME`.
+  This `restart:false` is useful when your command might activate sound-related features(e.g: music play) and you don't want to be interfered.
+- This module can detect sequential hotwords at a time. When you say **"snowboy blah blah jarvis blah blah ... "**, the detector could catch `"snowboy-jarvis"` as hotword. you can use this `snowboy-jarvis` as your command name.
 
 
 ## 1. notificationExec

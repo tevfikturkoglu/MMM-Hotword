@@ -41,6 +41,6 @@
   sensitivity: "0.7",
 },
 ```
-When you are using `.pmdl`, set `DetectorApplyFrontend` to `false`.
+When you are using `.pmdl`, set `detectorApplyFrontend` to `false`.
 
 For `.umdl`, When you use only`snowboy` and `smart_mirror`, `false` is better. But with other models, `true` is better.
