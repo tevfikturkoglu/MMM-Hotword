@@ -6,7 +6,7 @@
 
 const path = require("path")
 const exec = require("child_process").exec
-const record = require("./components/lpcm16.js")
+const Record = require("./components/lpcm16.js")
 const B2W = require("./components/b2w.js")
 const Detector = require("./snowboy/lib/node/index.js").Detector
 const Models = require("./snowboy/lib/node/index.js").Models
@@ -116,17 +116,20 @@ module.exports = NodeHelper.create({
     console.log("[HOTWORD] begins.")
     this.sendSocketNotification("START")
     var silenceTimer = 0
+    var silenceLimit = this.config.mic.silence * 1000
     this.detector
       .on("silence", ()=>{
-        this.sendSocketNotification("SILENCE")
         var now = Date.now()
+        //console.log(".", now - silenceTimer) //leave this to check recording status
+        this.sendSocketNotification("SILENCE")
         if (this.b2w !== null) {
-          if (now - silenceTimer > this.config.mic.silence * 1000) {
+          if (now - silenceTimer > silenceLimit) {
             this.stopListening()
           }
     		}
       })
       .on("sound", (buffer)=>{
+        //console.log("#") //leave this to check recording status
         this.sendSocketNotification("SOUND", {size:buffer.length})
         if (this.b2w !== null) {
           silenceTimer = Date.now()
@@ -161,48 +164,41 @@ module.exports = NodeHelper.create({
   },
 
   stopListening: function() {
+    if (!this.mic) return
     this.running = false
     console.log("[HOTWORD] stops.")
-    this.mic.unpipe(this.detector)
+    this.mic.stop()
     this.mic = null
-    var r = record.stop()
+  },
+
+  afterListening: function() {
+    if (this.detected) {
+      if (this.b2w !== null) {
+        var length = this.b2w.getAudioLength()
+        if (length < 8192) {
+          console.log("[HOTWORD] After Recording is too short")
+          this.b2w.destroy()
+          this.b2w = null
+          this.finish(this.detected, null)
+        } else {
+          console.log("[HOTWORD] After Recording finised. size:", length)
+          this.b2w.writeFile(path.resolve(__dirname, this.afterRecordingFile), (file)=>{
+            this.finish(this.detected, this.afterRecordingFile)
+          })
+        }
+      } else {
+        this.finish(this.detected, null)
+      }
+    } else {
+      this.finish()
+    }
   },
 
   startListening: function () {
     this.running = true
     console.log("[HOTWORD] Detector starts listening.")
-    this.mic = record.start(this.config.mic, ()=>{
-      this.deactivate()
-      if (this.detected) {
-        if (this.b2w !== null) {
-          var length = this.b2w.getAudioLength()
-          if (length < 8192) {
-            console.log("[HOTWORD] After Recording is too short")
-            this.b2w.destroy()
-            this.b2w = null
-            this.finish(this.detected, null)
-          } else {
-            console.log("[HOTWORD] After Recording finised. size:", length)
-            this.b2w.writeFile(path.resolve(__dirname, this.afterRecordingFile), (file)=>{
-              this.finish(this.detected, this.afterRecordingFile)
-            })
-          }
-        } else {
-          this.finish(this.detected, null)
-        }
-      } else {
-        this.finish()
-      }
-    })
-    this.mic.pipe(this.detector)
-/*
-    eos(this.detector, (err) => {
-      if (err) {
-        this.sendSocketNotification("ERROR", {error:err})
-      }
-      this.stopListening()
-    })
-*/
+    this.mic = new Record(this.config.mic, this.detector, ()=>{this.afterListening()})
+    this.mic.start()
   },
 
   finish: function(hotword = null, file = null) {

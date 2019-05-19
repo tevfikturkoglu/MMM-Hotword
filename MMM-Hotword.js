@@ -6,7 +6,7 @@
 Module.register("MMM-Hotword", {
   defaults: {
     detectorAudioGain: 2.0,
-    detectorApplyFrontend: true, // When you are using `.pmdl`, set this to `false`.
+    detectorApplyFrontend: false, // When you are using `.pmdl`, set this to `false`.
     // For `.umdl`, When you use only`snowboy` and `smart_mirror`, `false` is better. But with other models, `true` is better.
     mic: {
       recordProgram : "rec", //record prgram, `rec`, `arecord`, `sox`, `parec` is available
@@ -195,6 +195,7 @@ Module.register("MMM-Hotword", {
     var command = (this.config.commands.hasOwnProperty(hotword))
       ? this.config.commands[hotword]
       : this.config.defaultCommand
+    console.log(hotword, this.config.commands, command)
     if (command.hasOwnProperty("notificationExec")) {
       var ex = command.notificationExec
       var nen = (ex.hasOwnProperty("notification")) ? ex.notification : this.config.notifications.DETECTED
