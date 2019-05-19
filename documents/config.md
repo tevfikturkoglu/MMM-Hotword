@@ -25,7 +25,7 @@
             return {profile:"default"}
           }
         },
-        restart:false;
+        restart:false
       }
     }
   }
