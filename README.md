@@ -3,7 +3,7 @@ MMM-Hotword is a hotword detector using snowboy.
 You can use this module to wake another voice assistant or to give a command to other module.
 
 ### Screenshot
-![screenshot]()
+![screenshot](resources/screenshot.png)
 
 ### UPDATED
 **2.0.0 (2019-05-19)**
