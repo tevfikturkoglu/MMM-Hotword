@@ -135,11 +135,12 @@ module.exports = NodeHelper.create({
         this.sendSocketNotification("SOUND", {size:buffer.length})
         if (this.b2w !== null) {
           silenceTimer = Date.now()
-          if (now - afterRecordStart > afterRecordLimit) {
+          if (silenceTimer - afterRecordStart > afterRecordLimit) {
             this.stopListening()
+          } else {
+            this.b2w.add(buffer)
+            console.log("[HOTWORD] After Recording:", buffer.length)
           }
-          this.b2w.add(buffer)
-          console.log("[HOTWORD] After Recording:", buffer.length)
         }
       })
       .on("error", (err)=>{
