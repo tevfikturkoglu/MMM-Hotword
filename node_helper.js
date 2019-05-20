@@ -151,11 +151,13 @@ module.exports = NodeHelper.create({
       })
       .on("hotword", (index, hotword, buffer)=>{
         //console.log(">", hotword)
+        this.detected = (this.detected) ? this.detected + "-" + hotword : hotword
+        console.log("[HOTWORD] Detected:", this.detected)
+        this.sendSocketNotification("DETECT", {hotword:this.detected})
         if (this.config.commands.hasOwnProperty(hotword)) {
           var c = this.config.commands[hotword]
           afterRecordLimit = (c.hasOwnProperty("afterRecordLimit")) ? c.afterRecordLimit * 1000 : 0
         }
-
         if (afterRecordLimit > 0) {
           afterRecordStart = Date.now()
           silenceTimer = Date.now()
@@ -165,11 +167,9 @@ module.exports = NodeHelper.create({
               sampleRate: this.detector.sampleRate()
             })
           }
+        } else {
+          this.stopListening()
         }
-
-        this.detected = (this.detected) ? this.detected + "-" + hotword : hotword
-        console.log("[HOTWORD] Detected:", this.detected)
-        this.sendSocketNotification("DETECT", {hotword:this.detected})
         return
       })
     this.startListening()
