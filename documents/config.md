@@ -9,7 +9,7 @@
     mic: {
       recordProgram: "arecord",
       device: "plughw:1"
-    }
+    },
     models: [
       {
         hotwords    : "computer",
@@ -24,7 +24,8 @@
           payload: (detected, afterRecord) => {
             return {profile:"default"}
           }
-        }
+        },
+        restart:false
       }
     }
   }
@@ -125,10 +126,11 @@ mic: {
   - `hotwords`: **String** or **Array of String**(Some .umdl could have several hotwords). If hotword is detected, this value will be returned to use.
   - `file`: your `.umdl` or `.pmdl` filename. it should be located in `models` directory.
   - `sensitivity` : set sensitivity of detection for this hotword. Try various values to find a right one for your environment.
-- `commands`: Object of `command` object. See the [documents/command.md](documents/command.md)
+- `commands`: Object of `command` object. See the [documents/command.md](../documents/command.md)
 - `recipes`: You can define your `models` and `commands` on external recipe file instead direct describing on config.js file. Good and easy for managing config.js
 - `chimeOnFinish`: If this is set, after hotword detection(or following voice recording if it exists), this chime will be played.
-  **NOTICE** This feature is using HTML5 autoplay, but in some envirionment, the autoplay policy makes this feature disabled. See [documents/install.md](documents/install.md)
+
+  **NOTICE** This feature is using HTML5 autoplay, but in some envirionment, the autoplay policy makes this feature disabled. See [documents/install.md](../documents/install.md)
 - `useDisplay`: if set as `true`, the module status and detected hotword will be displayed.
 - `icons`: Set of icon used on `useDisplay:true`. You can use 5000+ `iconify` icons. (https://iconify.design/icon-sets/)
 - `iconify`: `iconify` script URL. When you are using this module with other which is using iconify also, you can set this to `null` to prevent duplicated scripts.
