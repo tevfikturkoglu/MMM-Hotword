@@ -117,10 +117,12 @@ module.exports = NodeHelper.create({
     this.sendSocketNotification("START")
     var silenceTimer = 0
     var silenceLimit = this.config.mic.silence * 1000
+    var afterRecordStart = 0
+    var afterRecordLimit = 0
     this.detector
       .on("silence", ()=>{
         var now = Date.now()
-        //console.log(".", now - silenceTimer) //leave this to check recording status
+        //console.log("VOID", now - silenceTimer, silenceLimit) //leave this to check recording status
         this.sendSocketNotification("SILENCE")
         if (this.b2w !== null) {
           if (now - silenceTimer > silenceLimit) {
@@ -129,12 +131,16 @@ module.exports = NodeHelper.create({
     		}
       })
       .on("sound", (buffer)=>{
-        //console.log("#") //leave this to check recording status
         this.sendSocketNotification("SOUND", {size:buffer.length})
         if (this.b2w !== null) {
           silenceTimer = Date.now()
-          this.b2w.add(buffer)
-          console.log("[HOTWORD] After Recording:", buffer.length)
+          //console.log("SOUND", afterRecordLimit, silenceTimer - afterRecordStart)
+          if (silenceTimer - afterRecordStart > afterRecordLimit) {
+            this.stopListening()
+          } else {
+            this.b2w.add(buffer)
+            console.log("[HOTWORD] After Recording:", buffer.length)
+          }
         }
       })
       .on("error", (err)=>{
@@ -144,16 +150,26 @@ module.exports = NodeHelper.create({
         return
       })
       .on("hotword", (index, hotword, buffer)=>{
-        silenceTimer = Date.now()
-        if (!this.detected) {
-          this.b2w = new B2W({
-            channel : this.detector.numChannels(),
-            sampleRate: this.detector.sampleRate()
-          })
-        }
+        //console.log(">", hotword)
         this.detected = (this.detected) ? this.detected + "-" + hotword : hotword
         console.log("[HOTWORD] Detected:", this.detected)
         this.sendSocketNotification("DETECT", {hotword:this.detected})
+        if (this.config.commands.hasOwnProperty(hotword)) {
+          var c = this.config.commands[hotword]
+          afterRecordLimit = (c.hasOwnProperty("afterRecordLimit")) ? c.afterRecordLimit * 1000 : 0
+        }
+        if (afterRecordLimit > 0) {
+          afterRecordStart = Date.now()
+          silenceTimer = Date.now()
+          if (this.detected && !this.b2w) {
+            this.b2w = new B2W({
+              channel : this.detector.numChannels(),
+              sampleRate: this.detector.sampleRate()
+            })
+          }
+        } else {
+          this.stopListening()
+        }
         return
       })
     this.startListening()

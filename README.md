@@ -6,6 +6,10 @@ You can use this module to wake another voice assistant or to give a command to 
 ![screenshot](resources/screenshot.png)
 
 ### UPDATES
+**2.0.1 (2019-05-20)**
+- Fix: issue of afterRecording couldn't stop
+- Add: `afterRecordLimit` to stop recording by force.
+
 **2.0.0 (2019-05-19)**
 - Whole new build-up
 - Some annoying dependencies are removed.

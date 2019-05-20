@@ -13,7 +13,8 @@ commands: {
     // And/Or
     moduleExec: { ... },
     // And/Or
-    restart: false // Optional
+    restart: false, // Optional
+    afterRecordLimit: 0, // Optional
   },
   "ANOTHERHOTWORD": { ... },
   ...
@@ -22,6 +23,7 @@ commands: {
 - When your `HOTWORD` is detected, defined Executable command will be triggered.
 - If `restart` is set as `false`(default is `true`), after command execution `MMM-Hotword` will be paused. If you want to restart, you need notification `HOTWORD_RESUME`.
   This `restart:false` is useful when your command might activate sound-related features(e.g: music play) and you don't want to be interfered.
+- If you don't want afterRecording (continuous recording after hotword detection), set `afterRecordLimit` to `0` to disable afterRecording. Or it will record your voice after hotword in this seconds(maximum) or until silence. Default value is `0`.
 - This module can detect sequential hotwords at a time. When you say **"snowboy blah blah jarvis blah blah ... "**, the detector could catch `"snowboy-jarvis"` as hotword. you can use this `snowboy-jarvis` as your command name.
 
 
