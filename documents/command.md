@@ -25,6 +25,7 @@ commands: {
   This `restart:false` is useful when your command might activate sound-related features(e.g: music play) and you don't want to be interfered.
 - If you don't want afterRecording (continuous recording after hotword detection), set `afterRecordLimit` to `0` to disable afterRecording. Or it will record your voice after hotword in this seconds(maximum) or until silence. Default value is `0`.
 - This module can detect sequential hotwords at a time. When you say **"snowboy blah blah jarvis blah blah ... "**, the detector could catch `"snowboy-jarvis"` as hotword. you can use this `snowboy-jarvis` as your command name.
+  - to use this feature, `afterRecordLimit` have to have enough time to catch following hotwords.
 
 
 ## 1. notificationExec
