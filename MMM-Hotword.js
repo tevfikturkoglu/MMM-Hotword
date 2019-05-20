@@ -195,7 +195,6 @@ Module.register("MMM-Hotword", {
     var command = (this.config.commands.hasOwnProperty(hotword))
       ? this.config.commands[hotword]
       : this.config.defaultCommand
-    console.log(hotword, this.config.commands, command)
     if (command.hasOwnProperty("notificationExec")) {
       var ex = command.notificationExec
       var nen = (ex.hasOwnProperty("notification")) ? ex.notification : this.config.notifications.DETECTED

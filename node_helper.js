@@ -117,6 +117,8 @@ module.exports = NodeHelper.create({
     this.sendSocketNotification("START")
     var silenceTimer = 0
     var silenceLimit = this.config.mic.silence * 1000
+    var afterRecordStart = 0
+    var afterRecordLimit = 0
     this.detector
       .on("silence", ()=>{
         var now = Date.now()
@@ -133,6 +135,9 @@ module.exports = NodeHelper.create({
         this.sendSocketNotification("SOUND", {size:buffer.length})
         if (this.b2w !== null) {
           silenceTimer = Date.now()
+          if (now - afterRecordStart > afterRecordLimit) {
+            this.stopListening()
+          }
           this.b2w.add(buffer)
           console.log("[HOTWORD] After Recording:", buffer.length)
         }
@@ -144,13 +149,23 @@ module.exports = NodeHelper.create({
         return
       })
       .on("hotword", (index, hotword, buffer)=>{
-        silenceTimer = Date.now()
-        if (!this.detected) {
-          this.b2w = new B2W({
-            channel : this.detector.numChannels(),
-            sampleRate: this.detector.sampleRate()
-          })
+        //console.log(">", hotword)
+        if (this.config.commands.hasOwnProperty(hotword)) {
+          var c = this.config.commands[hotword]
+          afterRecordLimit = (c.hasOwnProperty("afterRecordLimit")) ? c.afterRecordLimit * 1000 : 0
         }
+
+        if (afterRecordLimit > 0) {
+          afterRecordStart = Date.now()
+          silenceTimer = Date.now()
+          if (!this.detected) {
+            this.b2w = new B2W({
+              channel : this.detector.numChannels(),
+              sampleRate: this.detector.sampleRate()
+            })
+          }
+        }
+
         this.detected = (this.detected) ? this.detected + "-" + hotword : hotword
         console.log("[HOTWORD] Detected:", this.detected)
         this.sendSocketNotification("DETECT", {hotword:this.detected})
