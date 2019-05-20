@@ -159,34 +159,32 @@ Activation & Deactivation may be needed when you are using this module with othe
     }
   },
   {
-    module: "MMM-Hotword",
-    position: "top_right",
-    config: {
-      mic: {
-        recordProgram : "arecord",  
-        device        : "plughw:1",
+  module: "MMM-Hotword",
+  config: {
+    mic: {
+      recordProgram : "arecord",  
+      device        : "plughw:1",
+    },
+    models: [
+      {
+        hotwords    : "smart_mirror",
+        file        : "smart_mirror.umdl",
+        sensitivity : "0.5",
       },
-      models: [
-        {
-          hotwords: ["assistant"],
-          file: "smart_mirror.umdl",
-          sensitivity: "0.5",
-        },
-      ],
-      commands: {
-        "assistant": { //When `smart mirror` be spoken, MMM-AssistantMk2 will be activated.
-          notificationExec: {
-            notification: "ASSISTANT_ACTIVATE",
-            payload: (hotword, file) => {
-              return {profile: "default"}
-            }
-          },
-          restart:false
+    ],
+    defaultCommand: {
+      notificationExec: {
+        notification: "ASSISTANT_ACTIVATE",
+        payload: (detected, afterRecord) => {
+          return {profile:"default"}
         }
-      }
+      },
+      afterRecordLimit:0,
+      restart:false,
     },
   },
-  ```
+},
+```
 
 
 ## With MMM-AssistantMk2 (ver 3.x)

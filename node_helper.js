@@ -122,7 +122,7 @@ module.exports = NodeHelper.create({
     this.detector
       .on("silence", ()=>{
         var now = Date.now()
-        //console.log(".", now - silenceTimer) //leave this to check recording status
+        //console.log("VOID", now - silenceTimer, silenceLimit) //leave this to check recording status
         this.sendSocketNotification("SILENCE")
         if (this.b2w !== null) {
           if (now - silenceTimer > silenceLimit) {
@@ -131,10 +131,10 @@ module.exports = NodeHelper.create({
     		}
       })
       .on("sound", (buffer)=>{
-        //console.log("#") //leave this to check recording status
         this.sendSocketNotification("SOUND", {size:buffer.length})
         if (this.b2w !== null) {
           silenceTimer = Date.now()
+          //console.log("SOUND", afterRecordLimit, silenceTimer - afterRecordStart)
           if (silenceTimer - afterRecordStart > afterRecordLimit) {
             this.stopListening()
           } else {
@@ -161,7 +161,7 @@ module.exports = NodeHelper.create({
         if (afterRecordLimit > 0) {
           afterRecordStart = Date.now()
           silenceTimer = Date.now()
-          if (!this.detected) {
+          if (this.detected && !this.b2w) {
             this.b2w = new B2W({
               channel : this.detector.numChannels(),
               sampleRate: this.detector.sampleRate()
