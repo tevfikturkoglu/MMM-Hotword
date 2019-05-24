@@ -133,6 +133,7 @@ Other modules can get these notifications from MMM-Hotword by default (You can r
 
 
 Other modules can also make order to MMM-Hotword by these notifications.(re-definable too)
+
 |notification | payload | description |
 |---|---|---|
 |HOTWORD_RESUME | null | Activate
