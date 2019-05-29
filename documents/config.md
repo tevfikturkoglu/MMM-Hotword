@@ -6,6 +6,7 @@
   module: "MMM-Hotword",
   position: "top_right",
   config: {
+    chimeOnFinish: null,
     mic: {
       recordProgram: "arecord",
       device: "plughw:1"
