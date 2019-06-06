@@ -51,7 +51,7 @@ models: [
     sensitivity : "0.5",
   },
 ],
-customCommands: {
+commands: {
   "volume_up" : {
     notificationExec: {
       notification: "VOLUME_UP"
