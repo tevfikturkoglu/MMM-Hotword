@@ -225,7 +225,7 @@ Module.register("MMM-Hotword", {
             var mee = (ex.hasOwnProperty("exec")) ? ex.exec : null
             if (typeof mee == "function") {
                 var modules = MM.getModules().enumerate((m) => {
-                    if (memf.includes(m.name)) {
+                    if (memf.includes(m.name) || memf.length == 0) {
                         mee(m, hotword, file)
                     }
                 })
