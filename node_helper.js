@@ -154,8 +154,8 @@ module.exports = NodeHelper.create({
         this.detected = (this.detected) ? this.detected + "-" + hotword : hotword
         console.log("[HOTWORD] Detected:", this.detected)
         this.sendSocketNotification("DETECT", {hotword:this.detected})
-        if (this.config.commands.hasOwnProperty(hotword)) {
-          var c = this.config.commands[hotword]
+        if (this.config.commands.hasOwnProperty(this.detected)) {
+          var c = this.config.commands[this.detected]
           afterRecordLimit = (c.hasOwnProperty("afterRecordLimit")) ? c.afterRecordLimit * 1000 : 0
         }
         if (afterRecordLimit > 0) {
