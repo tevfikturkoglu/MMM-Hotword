@@ -206,7 +206,7 @@ Module.register("MMM-Hotword", {
         if (command.hasOwnProperty("notificationExec")) {
             var ex = command.notificationExec
             var nen = (ex.hasOwnProperty("notification")) ? ex.notification : this.config.notifications.DETECTED
-            var nenf = (typeof nen == "function") ? nen(htoword, file) : nen
+            var nenf = (typeof nen == "function") ? nen(hotword, file) : nen
             var nep = (ex.hasOwnProperty("payload")) ? ex.payload : { hotword: hotword, file: file }
             var nepf = (typeof nep == "function") ? nep(hotword, file) : nep
             this.sendNotification(nenf, nepf)
