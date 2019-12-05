@@ -8,6 +8,7 @@ You can use this module to wake another voice assistant or to give a command to 
 ### UPDATES
 **2.0.2 (2019-12-04)**
 - Fix: issue of `HOTWORD_RESUME` notification not working
+- Fix: some bugs of omitted configuration field.
 - Add: some more front-end log to check `commad` working
 
 **2.0.1 (2019-05-20)**
