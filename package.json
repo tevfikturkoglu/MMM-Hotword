@@ -1,6 +1,6 @@
 {
   "name": "MMM-Hotword",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A simple hotword(wake word) detector module for MagicMirror with Snowboy",
   "main": "MMM-Hotword.js",
   "keywords": [
@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/eouia/MMM-Hotword/issues"
   },
-  "dependencies": {}
+  "dependencies": {
+    "electron-rebuild": "^1.8.8",
+    "snowboy": "^1.3.1"
+  }
 }

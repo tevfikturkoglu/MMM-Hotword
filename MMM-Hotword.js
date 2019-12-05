@@ -85,9 +85,9 @@ Module.register("MMM-Hotword", {
   },
 
   initConfig: function() {
-    this.config.mic = Object.assign({}, this.defaults, this.config.mic)
-    this.config.icons = Object.assign({}, this.defaults, this.config.icons)
-    this.config.notifications = Object.assign({}, this.defaults, this.config.notifications)
+    this.config.mic = Object.assign({}, this.defaults.mic, this.config.mic)
+    this.config.icons = Object.assign({}, this.defaults.icons, this.config.icons)
+    this.config.notifications = Object.assign({}, this.defaults.notifications, this.config.notifications)
   },
 
   getDom: function() {
@@ -133,10 +133,10 @@ Module.register("MMM-Hotword", {
   notificationReceived: function(notification, payload, sender) {
     switch (notification) {
       case this.config.notifications.RESUME:
-        this.sendSocketNotification('RESUME')
+        this.sendSocketNotification('RESUME', true)
         break
       case this.config.notifications.PAUSE:
-        this.sendSocketNotification('PAUSE')
+        this.sendSocketNotification('PAUSE', true)
         break
     }
   },
@@ -200,6 +200,7 @@ Module.register("MMM-Hotword", {
   },
 
   doCommand: function(hotword, file) {
+    console.log("[HOTWORD] Command is excuting")
     var command = (this.config.commands.hasOwnProperty(hotword)) ?
       this.config.commands[hotword] :
       this.config.defaultCommand
@@ -209,12 +210,14 @@ Module.register("MMM-Hotword", {
       var nenf = (typeof nen == "function") ? nen(hotword, file) : nen
       var nep = (ex.hasOwnProperty("payload")) ? ex.payload : { hotword: hotword, file: file }
       var nepf = (typeof nep == "function") ? nep(hotword, file) : nep
+      console.log("[HOTWORD] notificationExec:", nenf, nepf)
       this.sendNotification(nenf, nepf)
     }
     if (command.hasOwnProperty("shellExec")) {
       var ex = command.shellExec
       var see = (ex.hasOwnProperty("exec")) ? ex.exec : null
       var seef = (typeof see == "function") ? see(hotword, file) : see
+      console.log("[HOTWORD] shellExec:", see)
       if (seef) this.sendSocketNotification("SHELL_EXEC", seef)
     }
     if (command.hasOwnProperty("moduleExec")) {
@@ -226,6 +229,7 @@ Module.register("MMM-Hotword", {
       if (typeof mee == "function") {
         var modules = MM.getModules().enumerate((m) => {
           if (memf.includes(m.name) || memf.length == 0) {
+            console.log("[HOTWORD] moduleExec:", m.name)
             mee(m, hotword, file)
           }
         })

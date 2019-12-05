@@ -11,8 +11,6 @@ const B2W = require("./components/b2w.js")
 const Detector = require("./snowboy/lib/node/index.js").Detector
 const Models = require("./snowboy/lib/node/index.js").Models
 const fs = require("fs")
-//const eos = require("end-of-stream")
-
 
 var NodeHelper = require("node_helper")
 
@@ -27,6 +25,7 @@ module.exports = NodeHelper.create({
     this.afterRecordingFile = "temp/afterRecording.wav"
     this.detected = null
     this.running = false
+    this.forcePause = false
   },
 
   loadRecipes: function(callback=()=>{}) {
@@ -68,6 +67,7 @@ module.exports = NodeHelper.create({
         this.initializeAfterLoading(payload)
         break
       case "RESUME":
+        if (payload) this.forcePause = false
         if (!this.running) {
           this.activate()
           this.sendSocketNotification("RESUMED")
@@ -76,6 +76,7 @@ module.exports = NodeHelper.create({
         }
         break
       case "PAUSE":
+        if (payload) this.forcePause = true
         if (this.running) {
           this.deactivate()
           this.sendSocketNotification("PAUSED")
@@ -218,6 +219,11 @@ module.exports = NodeHelper.create({
   },
 
   finish: function(hotword = null, file = null) {
+    if (this.forcePause) {
+      this.sendSocketNotification("PAUSED")
+      this.running = false
+      return
+    }
     var pl = {}
     if (hotword) {
       pl = {detected:true, hotword:hotword, file:file}
@@ -226,7 +232,7 @@ module.exports = NodeHelper.create({
     }
     this.detected = null
     console.log("[HOTWORD] Final Result:", pl)
-    if (!this.running) {
+    if (this.running) {
       this.sendSocketNotification("FINISH", pl)
     } else {
       this.sendSocketNotification("PAUSED")
