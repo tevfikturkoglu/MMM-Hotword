@@ -181,7 +181,7 @@ module.exports = NodeHelper.create({
 
   stopListening: function() {
     if (!this.mic) return
-    this.running = false
+    //this.running = false
     console.log("[HOTWORD] stops.")
     this.mic.stop()
     this.mic = null
@@ -218,7 +218,6 @@ module.exports = NodeHelper.create({
   },
 
   finish: function(hotword = null, file = null) {
-    this.running = false
     var pl = {}
     if (hotword) {
       pl = {detected:true, hotword:hotword, file:file}
@@ -227,6 +226,11 @@ module.exports = NodeHelper.create({
     }
     this.detected = null
     console.log("[HOTWORD] Final Result:", pl)
-    this.sendSocketNotification("FINISH", pl)
+    if (!this.running) {
+      this.sendSocketNotification("FINISH", pl)
+    } else {
+      this.sendSocketNotification("PAUSED")
+    }
+    this.running = false
   },
 })
