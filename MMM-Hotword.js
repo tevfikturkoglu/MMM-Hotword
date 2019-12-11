@@ -123,7 +123,9 @@ Module.register("MMM-Hotword", {
     var beep = document.createElement("audio")
     beep.id = "HOTWORD_BEEP"
     var bSource = document.createElement("source")
-    bSource.src = "modules/MMM-Hotword/" + this.config.chimeOnFinish
+    if (this.config.chimeOnFinish) {
+      bSource.src = "modules/MMM-Hotword/" + this.config.chimeOnFinish
+    }
     beep.appendChild(bSource)
     dom.appendChild(beep)
     dom.appendChild(repeat)
