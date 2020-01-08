@@ -65,10 +65,9 @@ Installer_yesno "Do you want check your audio configuration" && (
     fi
     echo
     Installer_warning "mic: {"
-    Installer_warning "  recorder: \"arecord\""
-
+    Installer_warning "  recordProgram: \"arecord\","
     Installer_warning "  device: \"$plug_rec\""
-    Installer_warning "}"
+    Installer_warning "},"
   fi
 )
 
