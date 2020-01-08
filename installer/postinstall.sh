@@ -23,6 +23,7 @@ cd "$Installer_dir"
 
 source utils.sh
 source hotword.sh
+
 # del last log
 rm installer.log 2>/dev/null
 
@@ -33,9 +34,6 @@ Installer_log
 Installer_version="$(cat ../package.json | grep version | cut -c15-19 2>/dev/null)"
 
 # Let's start !
-Installer_info "Welcome to Hotword v$Installer_version"
-Installer_info "postinstall script v$Installer_vinstaller"
-
 echo
 
 # Check not run as root
@@ -45,54 +43,28 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 # Check platform compatibility
-Installer_info "Checking OS..."
 Installer_checkOS
 if  [ "$platform" == "osx" ]; then
-  Installer_error "OS Detected: $OSTYPE ($os_name $os_version $arch)"
-  Installer_error "You need to read documents/1_install.md for Manual Install"
   exit 0
-else
-  Installer_success "OS Detected: $OSTYPE ($os_name $os_version $arch)"
 fi
 
 echo
 
-Installer_yesno "Do you want to execute automatic intallation ?" || exit 0
-
-# check dependencies
-dependencies=(libmagic-dev libatlas-base-dev sox libsox-fmt-all alsamixer aplay arecord)
-Installer_info "Checking all dependencies..."
-#Installer_check_dependencies
-Installer_success "All Dependencies needed are installed !"
-
-echo
-
-Hotword_CloneSB
-
-# all is ok than electron-rebuild
-Installer_info "Electron Rebuild"
-Installer_yesno "Do you want to execute electron rebuild" && (
-  #Installer_electronrebuild
-  Installer_success "Electron Rebuild Complete!"
-
-)
-
-echo
 # Audio out/in checking
 Installer_info "Checking Speaker and Microphone..."
 Installer_yesno "Do you want check your audio configuration" && (
- # Installer_checkaudio
+  Installer_checkaudio
   echo
- # Installer_checkmic
+  Installer_checkmic
   echo
 
   if [ ! -z "$plug_rec" ]; then
-    Installer_warning "This is your AMk2 micConfig working configuration :"
+    Installer_warning "This is your Hotword mic working configuration :"
     if [ "$os_name" == "raspbian" ]; then
       Installer_warning "Remember: if you are using RPI, it's better to use arecord program"
     fi
     echo
-    Installer_warning "micConfig: {"
+    Installer_warning "mic: {"
     Installer_warning "  recorder: \"arecord\""
 
     Installer_warning "  device: \"$plug_rec\""
@@ -103,4 +75,4 @@ Installer_yesno "Do you want check your audio configuration" && (
 echo
 
 # the end...
-Installer_exit "Hotword is now installed !"
+Installer_exit "Hotword v$Installer_version is now installed !"
