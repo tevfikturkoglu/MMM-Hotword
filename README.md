@@ -6,10 +6,15 @@ You can use this module to wake another voice assistant or to give a command to 
 ![screenshot](resources/screenshot.png)
 
 ### UPDATES
+
+**2.0.3 (2020-01-08)**
+- Create auto-installer via npm install for RPI/Linux (manual installation is always available)
+- Create post install script for check Mic configuration
+
 **2.0.2 (2019-12-04)**
 - Fix: issue of `HOTWORD_RESUME` notification not working
 - Fix: some bugs of omitted configuration field.
-- Add: some more front-end log to check `commad` working
+- Add: some more front-end log to check `command` working
 
 **2.0.1 (2019-05-20)**
 - Fix: issue of afterRecording couldn't stop
