@@ -264,9 +264,9 @@ Installer_checkmic () {
       Installer_debug "Actual test input config: $rec_hw"
       arecord -D $plug_rec -r 16000 -c 1 -d 3 -t wav -f S16_LE $audiofile 2>/dev/null || Installer_error "Current configuration not Working !"
       if [ -f $audiofile ]; then
-      aplay $audiofile # trying with aplay ...
-      Installer_yesno "Did you hear yourself?" true >/dev/null && break
-    fi
+        play $audiofile # trying with play ...
+        Installer_yesno "Did you hear yourself?" true >/dev/null && break
+      fi
       echo
       Installer_warning "Selection of the microphone device"
       #arecord -l
