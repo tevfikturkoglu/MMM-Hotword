@@ -141,6 +141,25 @@ Other modules can also make order to MMM-Hotword by these notifications.(re-defi
 
 Activation & Deactivation may be needed when you are using this module with other Mic/Speaker related modules (e.g: MMM-AssistantMk2, MMM-Spotify, or any other audio/video related modules) to avoid collision or occupation issues.
 
+## With MMM-AssistantMk2 (ver 3.x)
+```js
+{
+  module: "MMM-Hotword",
+  position: "top_left",
+  config: {
+    recipes: ["with-AMk2v3_smart-mirror.js"],
+    ... // your other configuration
+  }
+},
+{
+  module: "MMM-AssistantMk2",
+  position: "top_left",
+  config: {
+    recipes: ["with-MMM-Hotword.js"],
+    ... // your other configuration
+  }  
+},
+```
 
 ## With MMM-AssistantMk2 (ver 2.x)
 ```js
@@ -186,7 +205,3 @@ Activation & Deactivation may be needed when you are using this module with othe
   },
 },
 ```
-
-
-## With MMM-AssistantMk2 (ver 3.x)
-MMM-AssistantMk2 (ver 3.x) is not yet released. I'll add later
