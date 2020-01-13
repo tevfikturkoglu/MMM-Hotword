@@ -61,7 +61,7 @@ echo
 Installer_yesno "Do you want to execute automatic intallation ?" || exit 0
 
 # check dependencies
-dependencies=(libmagic-dev libatlas-base-dev sox libsox-fmt-all)
+dependencies=(libmagic-dev libatlas-base-dev sox libsox-fmt-all build-essential)
 Installer_info "Checking all dependencies..."
 Installer_check_dependencies
 Installer_success "All Dependencies needed are installed !"
