@@ -1,6 +1,6 @@
 {
   "name": "MMM-Hotword",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "description": "A simple hotword(wake word) detector module for MagicMirror with Snowboy",
   "main": "MMM-Hotword.js",
   "scripts": {
