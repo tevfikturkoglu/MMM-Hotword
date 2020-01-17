@@ -26,6 +26,7 @@ module.exports = NodeHelper.create({
     this.detected = null
     this.running = false
     this.forcePause = false
+    this.err = false
   },
 
   loadRecipes: function(callback=()=>{}) {
@@ -114,7 +115,7 @@ module.exports = NodeHelper.create({
       audioGain: this.config.detectorAudioGain,
       applyFrontend: this.config.detectorApplyFrontend
     })
-    console.log("[HOTWORD] begins.")
+    if (!this.err) console.log("[HOTWORD] begins.")
     this.sendSocketNotification("START")
     var silenceTimer = 0
     var silenceLimit = this.config.mic.silence * 1000
@@ -188,7 +189,13 @@ module.exports = NodeHelper.create({
     this.mic = null
   },
 
-  afterListening: function() {
+  afterListening: function(err) {
+	if (err) {
+     console.log("[HOTWORD:ERROR] " + err)
+     this.stopListening()
+     this.err = true
+     return
+    }
     if (this.detected) {
       if (this.b2w !== null) {
         var length = this.b2w.getAudioLength()
@@ -212,9 +219,10 @@ module.exports = NodeHelper.create({
   },
 
   startListening: function () {
+    if (this.err) return
     this.running = true
     console.log("[HOTWORD] Detector starts listening.")
-    this.mic = new Record(this.config.mic, this.detector, ()=>{this.afterListening()})
+    this.mic = new Record(this.config.mic, this.detector, (err)=>{this.afterListening(err)})
     this.mic.start()
   },
 
