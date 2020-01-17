@@ -100,9 +100,14 @@ class LPCM16 {
 
     this.cp = spawn(cmd, cmdArgs, cmdOptions)
     this.cp.stderr.on('data', (data) => {
-      this.stream.destroy()
-      return this.afterCallback(data.toString())
-    });
+      var dataToString = data.toString()
+      if (dataToString.search("WARN" > -1)) {
+        return
+      } else {
+        this.stream.destroy()
+        return this.afterCallback(data.toString())
+      }
+    })
     this.cp.on("exit", (c,s)=>{
       this.stream.destroy()
       this.afterCallback()
