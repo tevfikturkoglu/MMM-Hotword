@@ -20,21 +20,17 @@ You can use this module to wake another voice assistant or to give a command to 
 
 
 ### Installation
-Read [documents/install.md](documents/install.md)
+Read [Wiki:install](https://github.com/eouia/MMM-Hotword/wiki/Installation)
 
 ### (OPTIONAL) Get your personal model (.pmdl)
 Instead using universal model, You can make your own personal model. (ex. `Hey,Dude`, `volume up`, ...)
-Read [documents/trainer.md](documents/trainer.md)
+
+Read [wiki:trainer](https://github.com/eouia/MMM-Hotword/wiki/Make-your-own-personal-model)
 - Personal model is dedicated to each specific vocal pattern. You cannot share your model with others.
 - Personal model should be created on target device and mic. It might not work on other device.
 
 ### Or.. For universal model (.umdl)
-Read [documents/models.md](documents/models.md)
-
-
-### Documents.
-Read [documents](documents)
-
+Read [wiki:models](https://github.com/eouia/MMM-Hotword/wiki/Models)
 
 
 
