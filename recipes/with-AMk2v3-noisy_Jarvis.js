@@ -19,3 +19,5 @@ var recipe = {
     }
   }
 }
+
+exports.recipe = recipe // Don't remove this line.
