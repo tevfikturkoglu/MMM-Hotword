@@ -5,6 +5,8 @@
 
 Module.register("MMM-Hotword", {
   defaults: {
+    useAMk2: true, // user use AMk2
+    useOneHotword: true, // just one htoword is checked
     detectorAudioGain: 2.0,
     detectorApplyFrontend: false, // When you are using `.pmdl`, set this to `false`.
     // For `.umdl`, When you use only`snowboy` and `smart_mirror`, `false` is better. But with other models, `true` is better.
@@ -120,13 +122,22 @@ Module.register("MMM-Hotword", {
     var source = document.createElement("source")
     source.id = "HOTWORD_REPEAT_SOURCE"
     repeat.appendChild(source)
+    var confirm = document.createElement("audio")
+    confirm.id = "HOTWORD_CONFIRM_BEEP"
+    var cSource = document.createElement("source")
+    if (this.config.useAMk2) {
+      cSource.src = "modules/MMM-Hotword/resources/detected.mp3"
+    }
+    var bSource = document.createElement("source")
     var beep = document.createElement("audio")
     beep.id = "HOTWORD_BEEP"
     var bSource = document.createElement("source")
     if (this.config.chimeOnFinish) {
       bSource.src = "modules/MMM-Hotword/" + this.config.chimeOnFinish
     }
+    confirm.appendChild(cSource)
     beep.appendChild(bSource)
+    dom.appendChild(confirm)
     dom.appendChild(beep)
     dom.appendChild(repeat)
     return dom
@@ -146,9 +157,12 @@ Module.register("MMM-Hotword", {
   socketNotificationReceived: function(notification, payload) {
     switch (notification) {
       case "START":
-      case "DETECT":
       case "SOUND":
         this.status(notification, payload)
+        break
+      case "DETECT":
+        this.status(notification, payload)
+        if (this.config.useAMk2) this.playConfirmBeep()
         break
       case "FINISH":
         if (!payload.detected) {
@@ -199,6 +213,12 @@ Module.register("MMM-Hotword", {
     if (!this.config.chimeOnFinish) return
     var beep = document.getElementById("HOTWORD_BEEP")
     beep.play()
+  },
+
+  playConfirmBeep: function() {
+    if (!this.config.useAMk2) return
+    var confirm = document.getElementById("HOTWORD_CONFIRM_BEEP")
+    confirm.play()
   },
 
   doCommand: function(hotword, file) {

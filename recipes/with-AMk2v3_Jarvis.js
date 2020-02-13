@@ -14,10 +14,12 @@ var recipe = {
           var ret = {
             profile:"default",
             type: "MIC",
+            nochime: true
           }
           if (afterRecord) {
             ret.type = "WAVEFILE"
             ret.key = "modules/MMM-Hotword/" + afterRecord
+            ret.nochime = true
           }
           return ret
         }

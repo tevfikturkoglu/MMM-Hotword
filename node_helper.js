@@ -97,6 +97,7 @@ module.exports = NodeHelper.create({
   },
 
   activate: function() {
+    this.hotwordCount = 0
     this.b2w = null
     this.detected = null
     var models = new Models();
@@ -153,9 +154,18 @@ module.exports = NodeHelper.create({
       })
       .on("hotword", (index, hotword, buffer)=>{
         //console.log(">", hotword)
-        this.detected = (this.detected) ? this.detected + "-" + hotword : hotword
-        console.log("[HOTWORD] Detected:", this.detected)
-        this.sendSocketNotification("DETECT", {hotword:this.detected})
+        if (!this.config.useOneHotword) {
+          this.detected = (this.detected) ? this.detected + "-" + hotword : hotword
+          console.log("[HOTWORD] Detected:", this.detected)
+          this.sendSocketNotification("DETECT", {hotword:this.detected})
+        } else {
+          this.detected = (this.hotwordCount) ? this.detected : hotword
+          if (!this.hotwordCount) {
+            console.log("[HOTWORD] Detected:", this.detected)
+            this.sendSocketNotification("DETECT", {hotword:this.detected})
+          }
+          this.hotwordCount = 1
+        }
         if (this.config.commands.hasOwnProperty(this.detected)) {
           var c = this.config.commands[this.detected]
           afterRecordLimit = (c.hasOwnProperty("afterRecordLimit")) ? c.afterRecordLimit * 1000 : 0
